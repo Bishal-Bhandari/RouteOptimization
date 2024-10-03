@@ -5,7 +5,7 @@ import os
 import polyline
 import json
 
-from Calculate_time import CalcTime
+from Calculate_time import *
 
 
 # Load the API keys from the JSON file

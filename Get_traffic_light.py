@@ -18,9 +18,11 @@ def api_call():
 
     # Request to the Overpass API
     response = requests.get(overpass_url, params={'data': overpass_query})
+    return response
 
 
-class TrafficLight:
+def get_traffic_light():
+    response = api_call()
     # Request was successful?
     if response.status_code == 200:
         # Parse the JSON response
@@ -34,3 +36,9 @@ class TrafficLight:
                 print(f"Traffic Light at lat: {lat}, lon: {lon}")
     else:
         print(f"Error: {response.status_code}")
+
+
+class TrafficLight:
+    def __init__(self):
+        get_traffic_light()
+

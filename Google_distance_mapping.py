@@ -3,11 +3,17 @@ import folium
 import webbrowser
 import os
 import polyline
+import json
 
 from Calculate_time import CalcTime
 
+
+# Load the API keys from the JSON file
+with open('api_keys.json') as json_file:
+    api_keys = json.load(json_file)
+
 # Google Maps API key
-api_key = "AIzaSyADWVU2xh6ZddvlM1eVxaYHKAgxuoDNhoI"
+api_key = api_keys['Google_API']['API_key']
 
 # Start and destination coordinates
 start_point = "49.893738936899936,10.891734692962915"  # Start point (latitude, longitude)

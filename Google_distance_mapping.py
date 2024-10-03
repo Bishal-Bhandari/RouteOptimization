@@ -7,7 +7,7 @@ import polyline
 from Calculate_time import CalcTime
 
 # Google Maps API key
-api_key = "AIzaSyADWVU2xh6ZddvlM1eVxaYHKAgxuoDNhoI"
+api_key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 # Start and destination coordinates
 start_point = "49.893738936899936,10.891734692962915"  # Start point (latitude, longitude)

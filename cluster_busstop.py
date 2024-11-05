@@ -21,3 +21,30 @@ def assign_cluster(line_count):
         return '2 Lines'
     else:
         return '3+ Lines'
+
+
+bus_stop_groups_detailed['Cluster'] = bus_stop_groups_detailed['Line_Count'].apply(assign_cluster)
+
+# Prepare data for plotting with clusters
+bus_stop_groups_detailed['Bus_Lines'] = bus_stop_groups_detailed['Bus_Line'].apply(lambda x: ', '.join(map(str, x)))
+
+# Create an interactive scatter plot
+fig = px.scatter(
+    bus_stop_groups_detailed,
+    x='Line_Count',
+    y='Bus_Stop',
+    color='Cluster',
+    hover_data={'Bus_Stop': True, 'Bus_Lines': True, 'Line_Count': True},
+    title='Interactive Clustering of Bus Stops by Number of Bus Lines'
+)
+
+# Customize plot appearance
+fig.update_layout(
+    xaxis_title='Number of Bus Lines Served',
+    yaxis_title='Bus Stop',
+    yaxis={'categoryorder': 'total ascending'},  # Arrange bus stops based on clustering
+    title_x=0.5
+)
+
+# Show the interactive plot
+fig.show()

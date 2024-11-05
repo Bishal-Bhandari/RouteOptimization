@@ -49,7 +49,7 @@ fig = px.scatter(
     y='Bus_Stop',
     color='Cluster',
     hover_data={'Bus_Stop': True, 'Bus_Lines': True, 'Line_Count': True},
-    title='Interactive Clustering of Bus Stops by Number of Bus Lines'
+    title='Bus Stops by Number of Bus Lines'
 )
 
 # Plot label

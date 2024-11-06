@@ -41,6 +41,11 @@ bus_stop_groups_detailed['Cluster'] = bus_stop_groups_detailed['Line_Count'].app
 
 # Plotting for cluster
 bus_stop_groups_detailed['Bus_Lines'] = bus_stop_groups_detailed['Bus_Line'].apply(lambda x: ', '.join(map(str, x)))
+output_data = bus_stop_groups_detailed[['Bus_Stop', 'Cluster', 'Bus_Lines']]
+
+# Save output
+output_data.to_csv("refineData/bus_stop_clusters.csv", index=False)
+
 
 # For scatter plot
 fig = px.scatter(

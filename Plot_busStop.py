@@ -81,8 +81,7 @@ table_html = f"""
 
 table_html += "</table></div>"
 
-# Inject the fixed-position HTML table directly into the map's HTML
-from folium import IFrame
+# Add HTML table into the map's HTML
 map.get_root().html.add_child(folium.Element(table_html))
 
 # Save the map

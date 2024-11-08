@@ -1,25 +1,45 @@
-import numpy as np
+import folium
 import pandas as pd
-import matplotlib.pyplot as plt
-from mpl_toolkits.basemap import Basemap
+import webbrowser
+import os
 
-# CSV file with latitudes and longitudes
-df = pd.read_csv('your_file.csv')  # Adjust to your file path
+# Load file
+df = pd.read_excel('refineData/filtered_busStop_LatLong.ods', engine='odf')  # file path
 
-# For basemap
-fig, ax = plt.subplots(figsize=(12, 8))
-m = Basemap(projection='merc',
-            llcrnrlat=df['latitude'].min() - 1, urcrnrlat=df['latitude'].max() + 1,
-            llcrnrlon=df['longitude'].min() - 1, urcrnrlon=df['longitude'].max() + 1,
-            resolution='i')
+# Fill missing
+df['Stop name'] = df['Stop name'].fillna('NA')
+df['Bin'] = df['Bin'].fillna('NA')
+df['Bench'] = df['Bench'].fillna('NA')
 
-m.drawcoastlines()
-m.drawcountries()
+# Create a base map
+center_lat = df['Latitude'].mean()
+center_long = df['Longitude'].mean()
+map = folium.Map(location=[center_lat, center_long], zoom_start=10)
 
-# Scatter plot for latitude and longitude with different colors
-colors = plt.cm.rainbow(np.linspace(0, 1, len(df)))
-for i, (lat, lon) in enumerate(zip(df['latitude'], df['longitude'])):
-    x, y = m(lon, lat)
-    m.plot(x, y, 'o', markersize=5, color=colors[i])
+# Add points
+for index, row in df.iterrows():
+    # Create a popup with information from the file
+    popup_content = f"""
+        <b>Stop Name:</b> {row['Stop name']}<br>
+        <b>Available Bin:</b> {row['Bin']}<br>
+        <b>Bench:</b> {row['Bench']}<br>
+    """
 
-plt.show()
+    # Tooltip
+    folium.CircleMarker(
+        location=[row['Latitude'], row['Longitude']],
+        radius=5,
+        color=f'#{hex(index)[2:]:0<6}',  # different color for each point
+        fill=True,
+        fill_color=f'#{hex(index)[2:]:0<6}',
+        fill_opacity=0.7,
+        tooltip=row['Stop name'],  # Tooltip when hovering
+    ).add_to(map).add_child(folium.Popup(popup_content))  # Popup with detailed info
+
+# Save the map
+map_file = "templates/map_busStop.html"
+map.save(map_file)
+
+# Open the map
+file_path = os.path.abspath(map_file)
+webbrowser.open(f"file://{file_path}")

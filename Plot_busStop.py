@@ -37,34 +37,47 @@ for index, row in df.iterrows():
         tooltip=row['Stop name'],  # Tooltip when hovering
     ).add_to(map).add_child(folium.Popup(popup_content))  # Popup with detailed info
 
-# Create the HTML table content for the right corner
+# To display information section
 table_html = f"""
 <div style="position: fixed; 
             top: 10px; right: 10px; 
-            width: 300px; 
+            width: 240px; 
             height: auto; 
             padding: 10px; 
             background-color: white; 
             border: 2px solid black; 
             z-index: 9999; 
             overflow-y: auto;">
-    <h4>Info</h4>
+    <h4>Information</h4>
+    <h5>Population is based on 1km X 1km grid provided by <a href="https://experience.arcgis.com/experience/2ce4e1cccb244421a281fa813c7523fc">Statistische Ämter des Bundes und der Länder<a><h5>
     <table style="width: 100%; border-collapse: collapse;">
         <tr>
             <th style="border: 1px solid black; padding: 5px;">Density Level</th>
             <th style="border: 1px solid black; padding: 5px;">Population</th>
         </tr>
-"""
-
-for index, row in df.iterrows():
-    table_html += f"""
         <tr>
-            <td style="border: 1px solid black; padding: 5px;">{row['Stop name']}</td>
-            <td style="border: 1px solid black; padding: 5px;">{row['Bin']}</td>
-            <td style="border: 1px solid black; padding: 5px;">{row['Bench']}</td>
-            <td style="border: 1px solid black; padding: 5px;">{row['Density']}</td>
+            <td style="border: 1px solid black; padding: 5px;">5</td>
+            <td style="border: 1px solid black; padding: 5px;">5770 to 8800</td>
         </tr>
-    """
+        <tr>
+            <td style="border: 1px solid black; padding: 5px;">4</td>
+            <td style="border: 1px solid black; padding: 5px;">3850 to 5770</td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid black; padding: 5px;">3</td>
+            <td style="border: 1px solid black; padding: 5px;">2480 to 3850</td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid black; padding: 5px;">2</td>
+            <td style="border: 1px solid black; padding: 5px;">1440 to 2480</td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid black; padding: 5px;">1</td>
+            <td style="border: 1px solid black; padding: 5px;">Under 1140</td>
+        </tr>
+    </table>
+</div>
+"""
 
 table_html += "</table></div>"
 

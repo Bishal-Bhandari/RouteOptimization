@@ -4,7 +4,7 @@ import webbrowser
 import os
 
 # Load file
-df = pd.read_excel('refineData/filtered_busStop_LatLong.ods', engine='odf')  # file path
+df = pd.read_excel('refineData/final_busStop_density.ods', engine='odf')  # file path
 
 # Fill missing
 df['Stop name'] = df['Stop name'].fillna('NA')
@@ -23,6 +23,7 @@ for index, row in df.iterrows():
         <b>Stop Name:</b> {row['Stop name']}<br>
         <b>Available Bin:</b> {row['Bin']}<br>
         <b>Bench:</b> {row['Bench']}<br>
+        <b>Population Density:</b> {row['Density']}<br>
     """
 
     # Tooltip

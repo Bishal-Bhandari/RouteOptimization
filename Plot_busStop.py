@@ -20,11 +20,13 @@ map = folium.Map(location=[center_lat, center_long], zoom_start=11.5)
 for index, row in df.iterrows():
     # Create a popup with information from the file
     popup_content = f"""
+    <div style="width: 150px;">  <!-- Adjust width as desired -->
         <b>Stop Name:</b> {row['Stop name']}<br>
         <b>Available Bin:</b> {row['Bin']}<br>
         <b>Bench:</b> {row['Bench']}<br>
         <b>Population Density:</b> {row['Density']}<br>
-    """
+    </div>
+"""
 
     # Tooltip
     folium.CircleMarker(

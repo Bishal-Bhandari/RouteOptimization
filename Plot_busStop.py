@@ -14,7 +14,7 @@ df['Bench'] = df['Bench'].fillna('NA')
 # Create a base map
 center_lat = df['Latitude'].mean()
 center_long = df['Longitude'].mean()
-map = folium.Map(location=[center_lat, center_long], zoom_start=11)
+map = folium.Map(location=[center_lat, center_long], zoom_start=11.5)
 
 # Add points
 for index, row in df.iterrows():
@@ -40,7 +40,7 @@ for index, row in df.iterrows():
 # To display information section
 table_html = f"""
 <div style="position: fixed; 
-            top: 10px; right: 10px; 
+            top: 0px; right: 10px; 
             width: 240px; 
             height: auto; 
             padding: 10px; 
@@ -81,12 +81,9 @@ table_html = f"""
 
 table_html += "</table></div>"
 
-# Add the HTML overlay to the map
+# Inject the fixed-position HTML table directly into the map's HTML
 from folium import IFrame
-
-iframe = IFrame(table_html, width=350, height=400)
-popup = folium.Popup(iframe, max_width=400)
-folium.Marker([center_lat, center_long], icon=folium.DivIcon(html=table_html)).add_to(map)
+map.get_root().html.add_child(folium.Element(table_html))
 
 # Save the map
 map_file = "templates/map_busStop.html"

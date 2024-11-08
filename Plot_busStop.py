@@ -15,7 +15,7 @@ df['Bench'] = df['Bench'].fillna('NA')
 center_lat = df['Latitude'].mean()
 center_long = df['Longitude'].mean()
 map = folium.Map(location=[center_lat, center_long], zoom_start=11.5)
-
+print(center_lat, center_long)
 # Add points
 for index, row in df.iterrows():
     # Create a popup with information from the file
@@ -51,7 +51,7 @@ table_html = f"""
             z-index: 9999; 
             overflow-y: auto;">
     <h4>Information</h4>
-    <h5>Population is based on 1km X 1km grid provided by <a href="https://experience.arcgis.com/experience/2ce4e1cccb244421a281fa813c7523fc">Statistische Ämter des Bundes und der Länder<a><h5>
+    <h5>Population is based on 1km X 1km grid provided by <a href="https://experience.arcgis.com/experience/2ce4e1cccb244421a281fa813c7523fc">Statistische Ämter des Bundes und der Länder</a></h5>
     <table style="width: 100%; border-collapse: collapse;">
         <tr>
             <th style="border: 1px solid black; padding: 5px;">Density Level</th>
@@ -77,7 +77,8 @@ table_html = f"""
             <td style="border: 1px solid black; padding: 5px;">1</td>
             <td style="border: 1px solid black; padding: 5px;">Under 1140</td>
         </tr>
-    </table>
+    </table><br>
+    <h5>49°54'03.8"N 10°53'28.4"E is the mean point for map displaying 15 km of its nearest bus stop.</h5>
 </div>
 """
 

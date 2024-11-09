@@ -78,7 +78,7 @@ table_html = f"""
             <td style="border: 1px solid black; padding: 5px;">Under 1140</td>
         </tr>
     </table><br>
-    <h5>49°54'03.8"N 10°53'28.4"E is the mean point for map displaying 15 km of its nearest bus stop.</h5>
+    <h5>49°54'03.8"N 10°53'28.4"E is the mean point for map displaying 12 km of its nearest bus stop.</h5>
 </div>
 """
 

@@ -15,7 +15,6 @@ df['Bench'] = df['Bench'].fillna('NA')
 center_lat = df['Latitude'].mean()
 center_long = df['Longitude'].mean()
 map = folium.Map(location=[center_lat, center_long], zoom_start=11.5)
-print(center_lat, center_long)
 # Add points
 for index, row in df.iterrows():
     # Create a popup with information from the file

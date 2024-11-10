@@ -7,7 +7,6 @@ import json
 
 from Calculate_time import *
 
-
 # Load the API keys from the JSON file
 with open('api_keys.json') as json_file:
     api_keys = json.load(json_file)
@@ -49,7 +48,6 @@ if API_response.status_code == 200:
                 # # Get approx. stop time
                 # bus_stop_time = CalcTime(transit_details, duration)
                 # duration = bus_stop_time
-
                 bus_info.append({
                     "bus_name": transit_details['line']['short_name'],
                     "departure_stop": transit_details['departure_stop']['name'],
@@ -62,6 +60,18 @@ if API_response.status_code == 200:
 
         # Get a list of lat/lon tuples
         decoded_coords = polyline.decode(polyline_data)
+
+        # Save coordinates and bus line info to a file
+        saved_data = []
+        for i, coord in enumerate(decoded_coords):
+            data_entry = {"coordinates": coord}
+            if i < len(bus_info):  # Only add bus line info for relevant points
+                data_entry["bus_name"] = bus_info[i]["bus_name"]
+            saved_data.append(data_entry)
+
+        # Save to JSON file
+        with open('refineData/decoded_coords_with_bus_info.json', 'w') as outfile:
+            json.dump(saved_data, outfile, indent=4)
 
         # Centering the Folium map between the two points
         midpoint = [(decoded_coords[0][0] + decoded_coords[-1][0]) / 2,
@@ -103,4 +113,4 @@ if API_response.status_code == 200:
     else:
         print("No route found.")
 else:
-    print(f"Error in Google Directions API request: {API_response.status_code}")
+    print(f"Error in Google API request: {API_response.status_code}")

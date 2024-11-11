@@ -4,7 +4,7 @@ import webbrowser
 import folium
 
 # Load the JSON data
-with open("refineData/all_routes_data.json", "r") as f:
+with open("refineData/decoded_coords_with_bus_info.json", "r") as f:
     data = json.load(f)
 
 # Initialize the map centered at an average location

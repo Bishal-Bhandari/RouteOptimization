@@ -15,6 +15,7 @@ map = folium.Map(location=start_location, zoom_start=15)
 colors = ['blue', 'red', 'black', 'yellow', 'green', 'brown']
 
 # Loop through each route in the data
+route_polylines = []
 for route in data:
     coordinates = [point['coordinates'] for point in route['coordinates']]
     route_index = route['route_index']

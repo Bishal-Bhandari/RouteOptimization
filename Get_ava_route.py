@@ -50,16 +50,20 @@ for idx, destination in enumerate(destinations):
             distance = legs['distance']['text']
             duration = legs['duration']['text']
             polyline_data = route['overview_polyline']['points']
-            decoded_coords = polyline.decode(polyline_data)
+            # Decode the polyline to coordinates
+            try:
+                decoded_coords = polyline.decode(polyline_data)
 
-            # Append route info to list
-            route_info = {
-                "route_index": idx,
-                "distance": distance,
-                "duration": duration,
-                "coordinates": [{"latitude": lat, "longitude": lon} for lat, lon in decoded_coords]
-            }
-            all_routes_data.append(route_info)
+                # Append route info to list if decoding is successful
+                route_info = {
+                    "route_index": idx,
+                    "distance": distance,
+                    "duration": duration,
+                    "coordinates": [{"latitude": lat, "longitude": lon} for lat, lon in decoded_coords]
+                }
+                all_routes_data.append(route_info)
+            except Exception as e:
+                print(f"Error decoding polyline for route {idx + 1}: {e}")
     else:
         print(f"Failed to fetch route to {end_point}: {response.status_code}")
 
@@ -72,11 +76,11 @@ with open(output_file, 'w') as f:
 # Plotting all routes on a Folium map
 start_location = [49.893738936899936, 10.891734692962915]
 map = folium.Map(location=start_location, zoom_start=13)
-colors = random.choice(['blue', 'red', 'black', 'green', 'cyan',
+colors = ['blue', 'red', 'black', 'green', 'cyan',
                         'magenta', 'yellow', 'olive', 'gray', 'brown',
                         'purple', 'pink', 'teal', 'navy', 'tan',
                         'maroon', 'steelblue', 'orchid', 'orange', 'tomato',
-                        'chocolate', 'forestgreen', 'slategrey', 'crimson'])
+                        'chocolate', 'forestgreen', 'slategrey', 'crimson']
 
 # Plot each route
 for route in all_routes_data:

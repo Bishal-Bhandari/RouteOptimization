@@ -5,21 +5,24 @@ import requests
 import folium
 
 
-def get_places_of_interest(api_key, location, radius=1000, place_types=None, keywords=None):
+def get_places_of_interest(api_key, location, radius=3000, place_types=None, keywords=None):
     url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
     all_results = []
 
     if place_types is None:
-        place_types = ['tourist_attraction', 'museum', 'school', 'university', 'point_of_interest']
+        place_types = ['tourist_attraction', 'museum', 'school', 'university', 'point_of_interest', 'atm', 'bank',
+                       'train_station', 'supermarket', 'shopping_mall', 'pharmacy', 'library', 'department_store',
+                       'church', 'airport']
     if keywords is None:
         keywords = ['historical', 'landmark', 'monument', 'tourist']
 
-    # Fetch results for each type and keyword
+    # Get results
     for place_type in place_types:
         params = {
             'location': location,
             'radius': radius,
             'type': place_type,
+            'language': 'en',
             'key': api_key
         }
         response = requests.get(url, params=params)
@@ -40,17 +43,17 @@ def get_places_of_interest(api_key, location, radius=1000, place_types=None, key
     return all_results
 
 
-def plot_on_osm_map(api_key, location, radius=1000):
-    # Parse location into latitude and longitude
+def plot_on_osm_map(api_key, location, radius=3000):
+    # Parse location
     lat, lon = map(float, location.split(','))
 
-    # Initialize map centered on the location
+    # Initialize map
     folium_map = folium.Map(location=[lat, lon], zoom_start=14)
 
-    # Get places of interest
+    # Get POI
     places = get_places_of_interest(api_key, location, radius)
 
-    # Add a marker for each place of interest
+    # Add a marker
     for place in places:
         place_name = place.get('name')
         place_location = place.get('geometry', {}).get('location', {})
@@ -62,7 +65,7 @@ def plot_on_osm_map(api_key, location, radius=1000):
             folium.Marker(
                 location=[place_lat, place_lon],
                 popup=place_name,
-                icon=folium.Icon(color="green", icon="info-sign")
+                icon=folium.Icon(color="blue", icon="info-sign")
             ).add_to(folium_map)
 
     # Save map to an HTML file

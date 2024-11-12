@@ -9,7 +9,7 @@ with open("refineData/bamberg_all_routes_from_start.json", "r") as f:
 
 # Map centered at an average location
 start_location = [49.8936, 10.89168]  # start point
-map = folium.Map(location=start_location, zoom_start=13)
+map = folium.Map(location=start_location, zoom_start=15)
 
 # Colors for each route
 colors = ['blue', 'red', 'black', 'green', 'cyan',

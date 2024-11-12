@@ -5,17 +5,17 @@ import os
 import webbrowser
 import polyline
 
-# Load the API keys from the JSON file
+# API keys from the JSON file
 with open('api_keys.json') as json_file:
     api_keys = json.load(json_file)
 
 # Google Maps API key
 api_key = api_keys['Google_API']['API_key']
 
-# Start point (latitude, longitude)
+# Start point
 start_point = "49.893738936899936,10.891734692962915"  # ZOB
 
-# List of destination coordinates in Bamberg (latitude, longitude)
+# List of destination coordinates
 destinations = [
     (49.90454893430373, 10.851693436193193),  # Gaustadt Ziegelei
     # (49.9237529380112, 10.893679811566336),  # Hallstadt Ost
@@ -24,43 +24,43 @@ destinations = [
     # (49.86451606207455, 10.910425276172134)   # Bug Schloßstr.
 ]
 
-# Initialize a list to store route data
+# List to store route data
 all_routes_data = []
 
 # Loop through each destination
 for idx, destination in enumerate(destinations):
     end_point = f"{destination[0]},{destination[1]}"
 
-    # Request for driving directions with alternatives enabled
+    # Request for cars
     req_url_driving = (f"https://maps.googleapis.com/maps/api/directions/json"
                        f"?origin={start_point}&destination={end_point}&mode=driving&alternatives=true&key={api_key}")
 
-    # Request for bus (transit) directions with alternatives enabled
+    # Request for bus
     req_url_transit = (f"https://maps.googleapis.com/maps/api/directions/json"
                        f"?origin={start_point}&destination={end_point}&mode=transit&alternatives=true&key={api_key}")
 
-    # Send request for driving routes
+    # Request for cars routes
     response_driving = requests.get(req_url_driving)
-    # Send request for bus routes
+    # Request for bus routes
     response_transit = requests.get(req_url_transit)
 
-    # Parse the response for driving routes
+    # Parse for cars routes
     if response_driving.status_code == 200:
         route_data = response_driving.json()
         if route_data['routes']:
-            # Loop through all available driving routes
+            # Loop through all available cars routes
             for route_idx, route in enumerate(route_data['routes']):
                 legs = route['legs'][0]
 
-                # Extract route details
+                # Get route details
                 distance = legs['distance']['text']
                 duration = legs['duration']['text']
                 polyline_data = route['overview_polyline']['points']
-                # Decode the polyline to coordinates
+                # Polyline to coordinates
                 try:
                     decoded_coords = polyline.decode(polyline_data)
 
-                    # Append route info to list if decoding is successful
+                    # Append route info to list
                     route_info = {
                         "route_index": f"{idx}-{route_idx}-driving",  # To distinguish between modes and alternatives
                         "mode": "driving",
@@ -72,7 +72,7 @@ for idx, destination in enumerate(destinations):
                 except Exception as e:
                     print(f"Error decoding polyline for driving route {idx + 1}, alternative {route_idx + 1}: {e}")
 
-    # Parse the response for bus routes
+    # Parse for bus routes
     if response_transit.status_code == 200:
         route_data = response_transit.json()
         if route_data['routes']:
@@ -80,15 +80,15 @@ for idx, destination in enumerate(destinations):
             for route_idx, route in enumerate(route_data['routes']):
                 legs = route['legs'][0]
 
-                # Extract route details
+                # Get route details
                 distance = legs['distance']['text']
                 duration = legs['duration']['text']
                 polyline_data = route['overview_polyline']['points']
-                # Decode the polyline to coordinates
+                # Polyline to coordinates
                 try:
                     decoded_coords = polyline.decode(polyline_data)
 
-                    # Append route info to list if decoding is successful
+                    # Append route info to list
                     route_info = {
                         "route_index": f"{idx}-{route_idx}-bus",  # To distinguish between modes and alternatives
                         "mode": "bus",
@@ -103,13 +103,13 @@ for idx, destination in enumerate(destinations):
     else:
         print(f"Failed to fetch routes to {end_point}: {response_driving.status_code} (driving), {response_transit.status_code} (bus)")
 
-# Save all route data to JSON file
+# Save route to JSON
 output_file = "refineData/bamberg_all_routes_from_start.json"
 os.makedirs(os.path.dirname(output_file), exist_ok=True)
 with open(output_file, 'w') as f:
     json.dump(all_routes_data, f, indent=4)
 
-# Plotting all routes on a Folium map
+# Plotting all routes on a map
 start_location = [49.893738936899936, 10.891734692962915]
 map = folium.Map(location=start_location, zoom_start=13)
 colors = ['blue', 'red', 'black', 'green', 'cyan',
@@ -124,7 +124,7 @@ for route in all_routes_data:
     route_index = route['route_index']
     mode = route['mode']
 
-    # Draw polyline for each route
+    # Draw line for each route
     folium.PolyLine(
         coordinates,
         color=colors[int(route_index.split('-')[1]) % len(colors)],  # Different color for each alternative route
@@ -133,21 +133,21 @@ for route in all_routes_data:
         tooltip=f"{mode.capitalize()} Route {route_index}: Distance {route['distance']}, Duration {route['duration']}"
     ).add_to(map)
 
-    # Add marker at destination
+    # Destination maker
     folium.Marker(
         location=coordinates[-1],
         popup=f"Destination {route_index} ({mode.capitalize()})",
         icon=folium.Icon(color="red")
     ).add_to(map)
 
-# Add start marker
+# Start marker
 folium.Marker(
     location=start_location,
     popup="Start Point",
     icon=folium.Icon(color="green")
 ).add_to(map)
 
-# Save the map to an HTML file and open it
+# Save map to HTML file and open it
 map_file = "templates/bamberg_all_routes_map.html"
 map.save(map_file)
 file_path = os.path.abspath(map_file)

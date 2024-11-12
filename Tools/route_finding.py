@@ -6,7 +6,7 @@ import os
 import webbrowser
 
 # API keys from the JSON file
-with open('api_keys.json') as json_file:
+with open('../api_keys.json') as json_file:
     api_keys = json.load(json_file)
 
 # ORS API key
@@ -44,7 +44,7 @@ folium.Marker(location=(end_coords[1], end_coords[0]), tooltip="End Point", icon
     route_map)
 
 # Save the map
-map_file = "templates/route_map.html"
+map_file = "../templates/route_map.html"
 route_map.save(map_file)
 
 # Open map

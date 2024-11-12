@@ -3,60 +3,68 @@ import os
 import webbrowser
 import folium
 
-# Load the JSON data
-with open("refineData/all_routes_data.json", "r") as f:
+# Load the JSON
+with open("refineData/bamberg_all_routes_from_start.json", "r") as f:
     data = json.load(f)
 
-# Initialize the map centered at an average location (start point)
-start_location = [49.8936, 10.89168]
+# Map centered at an average location
+start_location = [49.8936, 10.89168]  # start point
 map = folium.Map(location=start_location, zoom_start=13)
 
-# Define colors for each route
-colors = ['blue', 'red', 'green', 'purple', 'orange', 'brown']
+# Colors for each route
+colors = ['blue', 'red', 'black', 'green', 'cyan',
+          'magenta', 'yellow', 'olive', 'gray', 'brown',
+          'purple', 'pink', 'teal', 'navy', 'tan',
+          'maroon', 'steelblue', 'orchid', 'orange', 'tomato',
+          'chocolate', 'forestgreen', 'slategrey', 'crimson']
 
-# Loop through each route in the data
+# Loop through each route in file
 for route in data:
     route_index = route['route_index']
+    mode = route['mode']  # Cars or Bus
     route_distance = route['distance']
     route_duration = route['duration']
 
-    # Extract coordinates for plotting
+    # Get coordinates for plotting
     coordinates = [(point['latitude'], point['longitude']) for point in route['coordinates']]
 
-    # Add the polyline for the route to the map
+    # Add the polyline for map
     folium.PolyLine(
         coordinates,
-        color=colors[route_index % len(colors)],
+        color=colors[int(route_index.split('-')[1]) % len(colors)],  # Different color for each alternative route
         weight=5,
         opacity=0.7,
-        tooltip=f"Route {route_index + 1}: Distance {route_distance}, Duration {route_duration}"
+        tooltip=f"{mode.capitalize()} Route {route_index}: Distance {route_distance}, Duration {route_duration}"
     ).add_to(map)
 
-    # Add markers at the start and end of the route
+    # Start marker
     folium.Marker(
         location=coordinates[0],
-        popup=f"Start of Route {route_index + 1}",
+        popup=f"Start of {mode.capitalize()} Route {route_index}",
         icon=folium.Icon(color="green")
     ).add_to(map)
+    #End marker
     folium.Marker(
         location=coordinates[-1],
-        popup=f"End of Route {route_index + 1}",
+        popup=f"End of {mode.capitalize()} Route {route_index}",
         icon=folium.Icon(color="red")
     ).add_to(map)
 
-    # Add markers for each bus stop, if available
-    for bus_stop in route.get('bus_info', []):
-        stop_coords = coordinates[0]  # Assume first coordinate for start
-        folium.Marker(
-            location=stop_coords,
-            popup=f"Bus: {bus_stop['bus_name']}<br>Departure: {bus_stop['departure_stop']}<br>Arrival: {bus_stop['arrival_stop']}",
-            icon=folium.Icon(color="blue")
-        ).add_to(map)
+    # Bus stop markers
+    if mode == 'bus' and 'bus_info' in route:
+        for bus_stop in route['bus_info']:
+            stop_coords = bus_stop.get('coordinates',
+                                       coordinates[0])
+            folium.Marker(
+                location=stop_coords,
+                popup=f"Bus Stop: {bus_stop.get('bus_name', 'Unknown')}<br>Departure: {bus_stop.get('departure_stop', 'Unknown')}<br>Arrival: {bus_stop.get('arrival_stop', 'Unknown')}",
+                icon=folium.Icon(color="blue")
+            ).add_to(map)
 
-# Save the map to an HTML file
+# Save the map
 map_file = "templates/map_multi_route.html"
 map.save(map_file)
 
-# Open the map in a web browser
+# Open the map
 file_path = os.path.abspath(map_file)
 webbrowser.open(f"file://{file_path}")

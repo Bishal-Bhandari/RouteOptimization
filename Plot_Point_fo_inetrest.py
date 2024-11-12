@@ -43,7 +43,7 @@ def get_places_of_interest(api_key, location, radius=3000, place_types=None, key
     return all_results
 
 
-def save_places_to_json(places, filename="places_of_interest.json"):
+def save_places_to_json(places, filename="refineData/places_of_interest.json"):
     places_data = []
 
     for place in places:
@@ -101,6 +101,8 @@ def plot_on_osm_map(api_key, location, radius=3000):
     # Open the map
     file_path = os.path.abspath(map_file)
     webbrowser.open(f"file://{file_path}")
+    # Save data to JSON
+    save_places_to_json(places)
 
 
 # Load the API keys from the JSON file

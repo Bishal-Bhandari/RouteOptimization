@@ -43,6 +43,32 @@ def get_places_of_interest(api_key, location, radius=3000, place_types=None, key
     return all_results
 
 
+def save_places_to_json(places, filename="places_of_interest.json"):
+    places_data = []
+
+    for place in places:
+        place_name = place.get('name')
+        place_location = place.get('geometry', {}).get('location', {})
+        place_lat = place_location.get('lat')
+        place_lon = place_location.get('lng')
+        place_types = place.get('types', [])  # List of types associated with the place
+
+        # Add to the data list if latitude and longitude exist
+        if place_lat and place_lon:
+            places_data.append({
+                "name": place_name,
+                "latitude": place_lat,
+                "longitude": place_lon,
+                "types": place_types
+            })
+
+    # Save the data to a JSON file
+    with open(filename, 'w', encoding='utf-8') as file:
+        json.dump(places_data, file, ensure_ascii=False, indent=4)
+
+    print(f"Places data saved to {filename}.")
+
+
 def plot_on_osm_map(api_key, location, radius=3000):
     # Parse location
     lat, lon = map(float, location.split(','))

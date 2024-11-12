@@ -4,20 +4,25 @@ import folium
 import os
 import webbrowser
 import polyline
+import random
+
+# Load the API keys from the JSON file
+with open('api_keys.json') as json_file:
+    api_keys = json.load(json_file)
 
 # Google Maps API key
-api_key = 'YOUR_GOOGLE_API_KEY'
+api_key = api_keys['Google_API']['API_key']
 
 # Start point (latitude, longitude)
-start_point = "49.893738936899936,10.891734692962915"
+start_point = "49.893738936899936,10.891734692962915" # ZOB
 
 # List of destination coordinates in Bamberg (latitude, longitude)
 destinations = [
-    (49.8988, 10.9009),  # Bamberg University
-    (49.8932, 10.8984),  # Altenburg Castle
-    (49.8972, 10.8757),  # Brose Arena
-    (49.8999, 10.8918),  # City Hall
-    (49.8916, 10.8866)   # Bamberg Cathedral
+    (49.90454893430373, 10.851693436193193),  # Gaustadt Ziegelei
+    (49.9237529380112, 10.893679811566336),  # Hallstadt Ost
+    (49.8786226434617, 10.929225395216823),  # Strullendorfer Straße
+    (49.87255962112503, 10.874977083590274),  # Bamberg König-Konrad-Str.
+    (49.86451606207455, 10.910425276172134)   # Bug Schloßstr.
 ]
 
 # Initialize a list to store route data
@@ -67,7 +72,11 @@ with open(output_file, 'w') as f:
 # Plotting all routes on a Folium map
 start_location = [49.893738936899936, 10.891734692962915]
 map = folium.Map(location=start_location, zoom_start=13)
-colors = ['blue', 'green', 'red', 'purple', 'orange', 'brown']
+colors = random.choice(['blue', 'red', 'black', 'green', 'cyan',
+                        'magenta', 'yellow', 'olive', 'gray', 'brown',
+                        'purple', 'pink', 'teal', 'navy', 'tan',
+                        'maroon', 'steelblue', 'orchid', 'orange', 'tomato',
+                        'chocolate', 'forestgreen', 'slategrey', 'crimson'])
 
 # Plot each route
 for route in all_routes_data:

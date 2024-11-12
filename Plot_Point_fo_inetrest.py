@@ -1,33 +1,54 @@
+import json
+import os
+import webbrowser
 import requests
 import folium
 
 
-def get_places_of_interest(api_key, location, radius=500, place_type='restaurant'):
+def get_places_of_interest(api_key, location, radius=1000, place_types=None, keywords=None):
     url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
-    params = {
-        'location': location,  # Format: "latitude,longitude"
-        'radius': radius,  # Radius in meters
-        'type': place_type,  # e.g., restaurant, park, cafe, etc.
-        'key': api_key
-    }
+    all_results = []
 
-    response = requests.get(url, params=params)
-    if response.status_code == 200:
-        return response.json().get('results', [])
-    else:
-        print("Error:", response.status_code)
-        return []
+    if place_types is None:
+        place_types = ['tourist_attraction', 'museum', 'school', 'university', 'point_of_interest']
+    if keywords is None:
+        keywords = ['historical', 'landmark', 'monument', 'tourist']
+
+    # Fetch results for each type and keyword
+    for place_type in place_types:
+        params = {
+            'location': location,
+            'radius': radius,
+            'type': place_type,
+            'key': api_key
+        }
+        response = requests.get(url, params=params)
+        if response.status_code == 200:
+            all_results.extend(response.json().get('results', []))
+
+    for keyword in keywords:
+        params = {
+            'location': location,
+            'radius': radius,
+            'keyword': keyword,
+            'key': api_key
+        }
+        response = requests.get(url, params=params)
+        if response.status_code == 200:
+            all_results.extend(response.json().get('results', []))
+
+    return all_results
 
 
-def plot_on_osm_map(api_key, location, radius=500, place_type='restaurant'):
+def plot_on_osm_map(api_key, location, radius=1000):
     # Parse location into latitude and longitude
     lat, lon = map(float, location.split(','))
 
     # Initialize map centered on the location
-    m = folium.Map(location=[lat, lon], zoom_start=15)
+    folium_map = folium.Map(location=[lat, lon], zoom_start=14)
 
     # Get places of interest
-    places = get_places_of_interest(api_key, location, radius, place_type)
+    places = get_places_of_interest(api_key, location, radius)
 
     # Add a marker for each place of interest
     for place in places:
@@ -41,15 +62,23 @@ def plot_on_osm_map(api_key, location, radius=500, place_type='restaurant'):
             folium.Marker(
                 location=[place_lat, place_lon],
                 popup=place_name,
-                icon=folium.Icon(color="blue", icon="info-sign")
-            ).add_to(m)
+                icon=folium.Icon(color="green", icon="info-sign")
+            ).add_to(folium_map)
 
     # Save map to an HTML file
-    m.save("places_of_interest_map.html")
-    print("Map saved as 'places_of_interest_map.html'.")
+    map_file = "templates/places_of_interest_map.html"
+    folium_map.save(map_file)
+
+    # Open the map
+    file_path = os.path.abspath(map_file)
+    webbrowser.open(f"file://{file_path}")
 
 
-# Replace with your API key and desired location
-api_key = "YOUR_GOOGLE_API_KEY"
-location = "48.137154,11.576124"  # Example coordinates (e.g., Munich)
+# Load the API keys from the JSON file
+with open('api_keys.json') as json_file:
+    api_keys = json.load(json_file)
+
+# Google Maps API key
+api_key = api_keys['Google_API']['API_key']
+location = "49.89517023418082, 10.885055540762723"  # Bamberg
 plot_on_osm_map(api_key, location)

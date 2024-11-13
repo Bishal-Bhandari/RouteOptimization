@@ -1,45 +1,50 @@
 import json
+import os
+import webbrowser
+
 import pandas as pd
-from math import radians, cos, sin, sqrt, atan2
-
-
-def haversine(lat1, lon1, lat2, lon2):
-    # Radius of the Earth in kilometers
-    R = 6371.0
-    # Convert latitude and longitude from degrees to radians
-    lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
-    # Haversine formula
-    dlat = lat2 - lat1
-    dlon = lon2 - lon1
-    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
-    c = 2 * atan2(sqrt(a), sqrt(1 - a))
-    return R * c * 1000  # Distance in meters
-
+import folium
 
 # Load and parse the JSON file
 json_file_path = 'refineData/places_of_interest.json'
 with open(json_file_path, 'r') as file:
     json_data = json.load(file)
 
-# Extract latitude and longitude from JSON data
-json_coordinates = [(entry['latitude'], entry['longitude']) for entry in json_data]
-
 # Load and parse the ODS file
 ods_file_path = 'refineData/final_busStop_density.ods'
 ods_data = pd.read_excel(ods_file_path, engine='odf')
 
-# Extract latitude and longitude from ODS data
-ods_coordinates = ods_data[['Latitude', 'Longitude']].dropna().values.tolist()
+# Initialize the map centered around Bamberg, assuming that’s the region for these coordinates
+m = folium.Map(location=[49.8917, 10.8871], zoom_start=13)
 
-# Compare each pair of coordinates
-for json_lat, json_lon in json_coordinates:
-    found_nearby = False
-    for ods_lat, ods_lon in ods_coordinates:
-        distance = haversine(json_lat, json_lon, ods_lat, ods_lon)
-        print(distance)
-        if distance <= 200:
-            print("Yes")
-            found_nearby = True
-            break
-        else:
-            print("No")
+# Plot ODS coordinates as red dots
+for _, row in ods_data.iterrows():
+    folium.CircleMarker(
+        location=[row['Latitude'], row['Longitude']],
+        radius=5,
+        color='red',
+        fill=True,
+        fill_color='red',
+        fill_opacity=0.6,
+        tooltip=f"Bus Stop: {row['Stop name']}"
+    ).add_to(m)
+
+# Plot JSON coordinates as blue dots with names
+for entry in json_data:
+    folium.CircleMarker(
+        location=[entry['latitude'], entry['longitude']],
+        radius=5,
+        color='blue',
+        fill=True,
+        fill_color='blue',
+        fill_opacity=0.6,
+        tooltip=entry['name']  # Display the name on hover
+    ).add_to(m)
+
+# Save the map to an HTML file and display it
+map_file = 'templates/coordinates_map.html'
+m.save(map_file)
+
+# Open the saved map
+file_path = os.path.abspath(map_file)
+webbrowser.open(f"file://{file_path}")

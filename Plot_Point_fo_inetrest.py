@@ -5,7 +5,7 @@ import requests
 import folium
 
 
-def get_places_of_interest(api_key, location, radius=3000, place_types=None, keywords=None):
+def get_places_of_interest(api_key, location, radius=15000, place_types=None, keywords=None):
     url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
     all_results = []
 
@@ -67,7 +67,7 @@ def save_places_to_json(places, filename="refineData/places_of_interest.json"):
         json.dump(places_data, file, ensure_ascii=False, indent=4)
 
 
-def plot_on_osm_map(api_key, location, radius=3000):
+def plot_on_osm_map(api_key, location, radius=15000):
     # Parse location
     lat, lon = map(float, location.split(','))
 

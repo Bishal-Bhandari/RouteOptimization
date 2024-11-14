@@ -43,7 +43,7 @@ for route in data:
         popup=f"Start of {mode.capitalize()} Route {route_index}",
         icon=folium.Icon(color="green")
     ).add_to(map)
-    #End marker
+    # End marker
     folium.Marker(
         location=coordinates[-1],
         popup=f"End of {mode.capitalize()} Route {route_index}",
@@ -57,7 +57,9 @@ for route in data:
                                        coordinates[0])
             folium.Marker(
                 location=stop_coords,
-                popup=f"Bus Stop: {bus_stop.get('bus_name', 'Unknown')}<br>Departure: {bus_stop.get('departure_stop', 'Unknown')}<br>Arrival: {bus_stop.get('arrival_stop', 'Unknown')}",
+                popup=f"Bus Stop: {bus_stop.get('bus_name', 'Unknown')}<br>Departure: "
+                      f"{bus_stop.get('departure_stop', 'Unknown')}<br>Arrival: "
+                      f"{bus_stop.get('arrival_stop', 'Unknown')}",
                 icon=folium.Icon(color="blue")
             ).add_to(map)
 

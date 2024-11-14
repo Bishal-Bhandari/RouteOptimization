@@ -38,7 +38,7 @@ for entry in json_data:
         fill=True,
         fill_color='blue',
         fill_opacity=0.6,
-        tooltip=entry['name']  # Display the name on hover
+        tooltip=entry['name']
     ).add_to(m)
 
 for entry in json_data:
@@ -49,7 +49,7 @@ for entry in json_data:
         fill=True,
         fill_color='blue',
         fill_opacity=0.6,
-        tooltip=entry['name']  # Display the name on hover
+        tooltip=entry['name']
     ).add_to(m)
 
 # Save the map to an HTML file and display it

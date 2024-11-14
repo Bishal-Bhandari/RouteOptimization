@@ -41,6 +41,17 @@ for entry in json_data:
         tooltip=entry['name']  # Display the name on hover
     ).add_to(m)
 
+for entry in json_data:
+    folium.CircleMarker(
+        location=[entry['latitude'], entry['longitude']],
+        radius=5,
+        color='blue',
+        fill=True,
+        fill_color='blue',
+        fill_opacity=0.6,
+        tooltip=entry['name']  # Display the name on hover
+    ).add_to(m)
+
 # Save the map to an HTML file and display it
 map_file = 'templates/coordinates_map.html'
 m.save(map_file)

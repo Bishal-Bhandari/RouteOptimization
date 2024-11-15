@@ -45,7 +45,7 @@ table_html = f"""
             width: 240px; 
             height: auto; 
             padding: 10px; 
-            background-color: white; 
+            background-color: white; <
             border: 2px solid black; 
             z-index: 9999; 
             overflow-y: auto;">

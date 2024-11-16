@@ -44,7 +44,7 @@ bus_stop_groups_detailed['Bus_Lines'] = bus_stop_groups_detailed['Bus_Line'].app
 output_data = bus_stop_groups_detailed[['Bus_Stop', 'Cluster', 'Bus_Lines']]
 
 # Save output
-output_data.to_csv("refineData/bus_stop_clusters.csv", index=False)
+output_data.to_excel("refineData/bus_stop_clusters.ods", engine="odf", index=False)
 
 
 # For scatter plot

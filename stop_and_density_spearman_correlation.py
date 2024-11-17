@@ -1,17 +1,37 @@
 import pandas as pd
-from scipy.stats import spearmanr
+import math
+from scipy.stats import t
 
-# Input file path
-input_file = "your_input_file.ods"  # Replace with your ODS file name
+# Load the ODS file and specify the sheet name
+file_path = "refineData/final_correlation_matched_output.ods"  # Replace with your actual ODS file path
+sheet_name = "Sheet1"        # Replace with the correct sheet name
 
-# Read the data from the ODS file
-df = pd.read_excel(input_file, usecols=['A', 'B'], engine="odf")  # Load only columns A and B
 
-# Ensure there are no missing values in the selected columns
-df = df.dropna(subset=['A', 'B'])
+# Read the ODS file
+data = pd.read_excel(file_path, sheet_name=sheet_name, engine='odf')
 
-# Calculate the Spearman correlation
-spearman_corr, p_value = spearmanr(df['A'], df['B'])
+# Extract the two columns
+col1 = data['Density']
+col2 = data['Line_Count']
 
+# Rank the data
+rank_col1 = col1.rank(method="average")
+rank_col2 = col2.rank(method="average")
+
+# Calculate the differences in ranks
+d = rank_col1 - rank_col2
+
+# Compute Spearman's rank correlation coefficient
+n = len(col1)
+spearman_corr = 1 - (6 * sum(d**2)) / (n * (n**2 - 1))
+
+# Calculate the t-statistic for Spearman correlation
+t_statistic = spearman_corr * math.sqrt((n - 2) / (1 - spearman_corr**2))
+
+# Calculate the p-value using the t-distribution (two-tailed test)
+df = n - 2  # degrees of freedom
+p_value = 2 * (1 - t.cdf(abs(t_statistic), df))
+
+# Display the results
 print(f"Spearman Correlation: {spearman_corr}")
 print(f"P-Value: {p_value}")

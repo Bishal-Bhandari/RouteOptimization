@@ -1,16 +1,17 @@
 import pandas as pd
+from scipy.stats import spearmanr
 
-# Read the ODS file into a DataFrame
-input_file = "refineData/final_busStop_density.ods"
-output_file = "refineData/spearman_unique_stopName_Density"
+# Input file path
+input_file = "your_input_file.ods"  # Replace with your ODS file name
 
-# Load the data from ODS
-df = pd.read_excel(input_file, engine="odf")  # Use 'engine="odf"' for ODS files
+# Read the data from the ODS file
+df = pd.read_excel(input_file, usecols=['A', 'B'], engine="odf")  # Load only columns A and B
 
-# Remove duplicate names in the 'stop' column, keeping the first occurrence
-unique_stops_df = df.drop_duplicates(subset=["Stop name"], keep="first")
+# Ensure there are no missing values in the selected columns
+df = df.dropna(subset=['A', 'B'])
 
-# Save the filtered data to a new ODS file
-unique_stops_df.to_excel(output_file, engine="odf", index=False)
+# Calculate the Spearman correlation
+spearman_corr, p_value = spearmanr(df['A'], df['B'])
 
-print(f"Filtered data saved to {output_file}")
+print(f"Spearman Correlation: {spearman_corr}")
+print(f"P-Value: {p_value}")

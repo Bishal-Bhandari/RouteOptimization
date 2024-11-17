@@ -4,7 +4,7 @@ import webbrowser
 import folium
 
 # Load the JSON
-with open("refineData/bamberg_all_routes_from_start.json", "r") as f:
+with open("../refineData/bamberg_all_routes_from_start.json", "r") as f:
     data = json.load(f)
 
 # Map centered at an average location
@@ -64,7 +64,7 @@ for route in data:
             ).add_to(map)
 
 # Save the map
-map_file = "templates/map_multi_route.html"
+map_file = "../templates/map_multi_route.html"
 map.save(map_file)
 
 # Open the map

@@ -6,7 +6,7 @@ import polyline
 import json
 
 # Load the API keys from the JSON file
-with open('api_keys.json') as json_file:
+with open('../api_keys.json') as json_file:
     api_keys = json.load(json_file)
 
 # Google Maps API key
@@ -63,7 +63,7 @@ if API_response.status_code == 200:
         }
 
         # Save route data to JSON file
-        with open('refineData/all_routes_data.json', 'w') as outfile:
+        with open('../refineData/all_routes_data.json', 'w') as outfile:
             json.dump([route_data], outfile, indent=4)
 
         # Center the Folium map at the midpoint of the route
@@ -96,7 +96,7 @@ if API_response.status_code == 200:
             ).add_to(m)
 
         # Save and display the map
-        map_file = "templates/bus_route_map.html"
+        map_file = "../templates/bus_route_map.html"
         m.save(map_file)
 
         # Open the saved map

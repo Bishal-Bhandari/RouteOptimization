@@ -6,7 +6,7 @@ import webbrowser
 import polyline
 
 # API keys from the JSON file
-with open('api_keys.json') as json_file:
+with open('../api_keys.json') as json_file:
     api_keys = json.load(json_file)
 
 # Google Maps API key
@@ -104,7 +104,7 @@ for idx, destination in enumerate(destinations):
         print(f"Failed to fetch routes to {end_point}: {response_driving.status_code} (driving), {response_transit.status_code} (bus)")
 
 # Save route to JSON
-output_file = "refineData/bamberg_all_routes_from_start.json"
+output_file = "../refineData/bamberg_all_routes_from_start.json"
 os.makedirs(os.path.dirname(output_file), exist_ok=True)
 with open(output_file, 'w') as f:
     json.dump(all_routes_data, f, indent=4)
@@ -148,7 +148,7 @@ folium.Marker(
 ).add_to(map)
 
 # Save map to HTML file and open it
-map_file = "templates/bamberg_all_routes_map.html"
+map_file = "../templates/bamberg_all_routes_map.html"
 map.save(map_file)
 file_path = os.path.abspath(map_file)
 webbrowser.open(f"file://{file_path}")

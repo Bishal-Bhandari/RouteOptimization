@@ -1,3 +1,4 @@
+import mplcursors
 import numpy as np
 import pandas as pd
 import math
@@ -49,7 +50,7 @@ data.to_excel(output_file_path, index=False, engine='odf')
 
 # Scatter plot to show the relationship between ranks
 plt.figure(figsize=(8, 6))
-sns.scatterplot(x=rank_col1, y=rank_col2)
+scatter = sns.scatterplot(x=rank_col1, y=rank_col2)
 
 # Adding labels and title
 plt.title('Ranked Data (Density vs Line Count)', fontsize=16)
@@ -58,7 +59,14 @@ plt.ylabel('Rank of Line Count')
 
 # Optionally, you can add a line for the correlation (Spearman's rank) using np.polyfit
 slope, intercept = np.polyfit(rank_col1, rank_col2, 1)
-plt.plot(rank_col1, slope*rank_col1 + intercept, color='red', linestyle='--', label='Spearman correlation line')
+plt.plot(rank_col1, slope * rank_col1 + intercept, color='red', linestyle='--', label='Spearman correlation line')
+
+# Add hover functionality
+mplcursors.cursor(scatter, hover=True).connect(
+    "add", lambda sel: sel.annotation.set_text(
+        f"Density: {data['Density'][sel.index]}\nLine Count: {data['Line_Count'][sel.index]}"
+    )
+)
 
 plt.legend()
 plt.show()

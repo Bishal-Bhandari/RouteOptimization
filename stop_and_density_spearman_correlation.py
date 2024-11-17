@@ -1,11 +1,12 @@
 import pandas as pd
 import math
 from scipy.stats import t
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Load the ODS file and specify the sheet name
 file_path = "refineData/final_correlation_matched_output.ods"  # Replace with your actual ODS file path
 sheet_name = "Sheet1"        # Replace with the correct sheet name
-
 
 # Read the ODS file
 data = pd.read_excel(file_path, sheet_name=sheet_name, engine='odf')
@@ -44,3 +45,17 @@ data['Rank_Difference'] = d
 # Save the DataFrame to a new ODS file
 output_file_path = "refineData/BackUP/output_with_ranks.ods"  # Replace with desired output file path
 data.to_excel(output_file_path, index=False, engine='odf')
+
+# Plotting the ranked data
+plt.figure(figsize=(10, 6))
+
+# Scatter plot of ranked data
+sns.regplot(x=data['Rank_Density'], y=data['Rank_Line_Count'], scatter_kws={'color': 'blue'}, line_kws={'color': 'red'})
+
+# Add title and labels
+plt.title(f'Spearman Correlation: {spearman_corr:.2f}\nP-Value: {p_value:.2e}', fontsize=16)
+plt.xlabel('Ranked Density')
+plt.ylabel('Ranked Line Count')
+
+# Show the plot
+plt.show()

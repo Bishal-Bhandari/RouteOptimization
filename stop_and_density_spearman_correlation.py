@@ -35,3 +35,12 @@ p_value = 2 * (1 - t.cdf(abs(t_statistic), df))
 # Display the results
 print(f"Spearman Correlation: {spearman_corr}")
 print(f"P-Value: {p_value}")
+
+# Add the rank columns to the DataFrame
+data['Rank_Density'] = rank_col1
+data['Rank_Line_Count'] = rank_col2
+data['Rank_Difference'] = d
+
+# Save the DataFrame to a new ODS file
+output_file_path = "refineData/BackUP/output_with_ranks.ods"  # Replace with desired output file path
+data.to_excel(output_file_path, index=False, engine='odf')

@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.express as px
 
 # File upload
-df = pd.read_excel('refineData/BackUP/BusLine_And_Stops.ods', engine='odf')
+df = pd.read_excel('refineData/BackUP/unique_bus_stop_merged_output.ods', engine='odf')
 
 # Group by 'Bus_Stop' and count the unique bus lines for each stop
 bus_stop_groups_detailed = df.groupby('Bus_Stop').agg({
@@ -41,7 +41,7 @@ bus_stop_groups_detailed['Cluster'] = bus_stop_groups_detailed['Line_Count'].app
 
 # Plotting for cluster
 bus_stop_groups_detailed['Bus_Lines'] = bus_stop_groups_detailed['Bus_Line'].apply(lambda x: ', '.join(map(str, x)))
-output_data = bus_stop_groups_detailed[['Bus_Stop', 'Cluster', 'Bus_Lines']]
+output_data = bus_stop_groups_detailed[['Bus_Stop', 'Cluster', 'Line_Count', 'Bus_Lines']]
 
 # Save output
 output_data.to_excel("refineData/bus_stop_clusters.ods", engine="odf", index=False)

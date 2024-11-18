@@ -1,3 +1,6 @@
+import os
+import webbrowser
+
 import requests
 import pandas as pd
 import folium
@@ -64,7 +67,7 @@ def get_osm_bike_parking():
 
 
 # Plot data on map
-def plot_bike_parking_folium(data, output_file="bicycle_parking_map.html"):
+def plot_bike_parking_folium(data, output_file="templates/bicycle_parking_map.html"):
     # Initialize map
     m = folium.Map(location=[49.8916, 10.8989], zoom_start=13)
 
@@ -79,6 +82,10 @@ def plot_bike_parking_folium(data, output_file="bicycle_parking_map.html"):
     # Save map
     m.save(output_file)
 
+    # Open the map
+    file_path = os.path.abspath(output_file)
+    webbrowser.open(f"file://{file_path}")
+
 
 # Main workflow
 def main():
@@ -86,7 +93,7 @@ def main():
     osm_data = get_osm_bike_parking()
 
     # Save to ODS
-    ods_filename = "osm_bike_parking.ods"
+    ods_filename = "refineData/osm_bike_parking.ods"
     save_to_ods(osm_data[["osmid", "latitude", "longitude"]], ods_filename)
 
     # Plot data on map

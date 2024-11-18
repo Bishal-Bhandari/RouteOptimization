@@ -35,12 +35,11 @@ def save_to_ods(data, filename):
 def get_osm_bike_parking():
     overpass_url = "http://overpass-api.de/api/interpreter"
     overpass_query = """
-    [out:json];
-    area[name="Bamberg"]->.searchArea;
+     [out:json];
     (
-      node["amenity"="bicycle_parking"](area.searchArea);
-      way["amenity"="bicycle_parking"](area.searchArea);
-      relation["amenity"="bicycle_parking"](area.searchArea);
+      node["amenity"="bicycle_parking"](around:10000,49.8916,10.8989);
+      way["amenity"="bicycle_parking"](around:10000,49.8916,10.8989);
+      relation["amenity"="bicycle_parking"](around:10000,49.8916,10.8989);
     );
     out body;
     """

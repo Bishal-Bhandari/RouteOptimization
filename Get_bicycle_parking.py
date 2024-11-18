@@ -93,7 +93,7 @@ def main():
 
     # Save to ODS
     ods_filename = "refineData/osm_bike_parking.ods"
-    save_to_ods(osm_data[["osmid", "latitude", "longitude"]], ods_filename)
+    osm_data.to_excel(ods_filename, index=False, engine='odf')
 
     # Plot data on map
     plot_bike_parking_folium(osm_data)

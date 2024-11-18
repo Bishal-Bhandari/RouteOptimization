@@ -11,8 +11,8 @@ with open(json_file_path, 'r') as file:
     json_data = json.load(file)
 
 # Load and parse the ODS file
-ods_file_path = 'refineData/final_busStop_density.ods'
-ods_data = pd.read_excel(ods_file_path, engine='odf')
+file_path = 'refineData/final_busStop_density.ods'
+ods_data = pd.read_excel(file_path, engine='odf')
 
 # Initialize the map centered around Bamberg, assuming that’s the region for these coordinates
 m = folium.Map(location=[49.8917, 10.8871], zoom_start=13)

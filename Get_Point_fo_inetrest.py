@@ -99,6 +99,7 @@ def plot_on_osm_map(api_key, location, radius=15000):
     # Open the map
     file_path = os.path.abspath(map_file)
     webbrowser.open(f"file://{file_path}")
+
     # Save data to JSON
     save_places_to_json(places)
 

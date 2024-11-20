@@ -105,11 +105,16 @@ def plot_on_osm_map(api_key, location, radius=15000):
     save_places_to_json(places)
 
 
-# Load the API keys from the JSON file
-with open('api_keys.json') as json_file:
-    api_keys = json.load(json_file)
+def main():
+    # Load the API keys from the JSON file
+    with open('api_keys.json') as json_file:
+        api_keys = json.load(json_file)
 
-# Google Maps API key
-api_key = api_keys['Google_API']['API_key']
-location = "49.89517023418082, 10.885055540762723"  # Bamberg
-plot_on_osm_map(api_key, location)
+    # Google Maps API key
+    api_key = api_keys['Google_API']['API_key']
+    location = "49.89517023418082, 10.885055540762723"  # Bamberg
+    plot_on_osm_map(api_key, location)
+
+
+if __name__ == "__main__":
+    main()

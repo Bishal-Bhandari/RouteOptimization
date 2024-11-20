@@ -5,6 +5,7 @@ import requests
 import folium
 
 
+# Get place of interest
 def get_places_of_interest(api_key, location, radius=15000, place_types=None, keywords=None):
     url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
     all_results = []

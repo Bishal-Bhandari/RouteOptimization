@@ -7,7 +7,7 @@ import pandas as pd
 import folium
 
 # Load the API keys from the JSON file
-with open('api_keys.json') as json_file:
+with open('../api_keys.json') as json_file:
     api_keys = json.load(json_file)
 
 # Google Maps API key

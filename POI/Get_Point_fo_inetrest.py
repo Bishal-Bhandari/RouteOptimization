@@ -44,7 +44,7 @@ def get_places_of_interest(api_key, location, radius=15000, place_types=None, ke
     return all_results
 
 
-def save_places_to_json(places, filename="refineData/places_of_interest.json"):
+def save_places_to_json(places, filename="../refineData/places_of_interest.json"):
     places_data = []
 
     for place in places:
@@ -94,7 +94,7 @@ def plot_on_osm_map(api_key, location, radius=15000):
             ).add_to(folium_map)
 
     # Save map to an HTML file
-    map_file = "templates/places_of_interest_map.html"
+    map_file = "../templates/places_of_interest_map.html"
     folium_map.save(map_file)
 
     # Open the map
@@ -107,7 +107,7 @@ def plot_on_osm_map(api_key, location, radius=15000):
 
 def main():
     # Load the API keys from the JSON file
-    with open('api_keys.json') as json_file:
+    with open('../api_keys.json') as json_file:
         api_keys = json.load(json_file)
 
     # Google Maps API key

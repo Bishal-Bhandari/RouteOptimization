@@ -6,12 +6,12 @@ import pandas as pd
 import folium
 
 # Load and parse the JSON file
-json_file_path = 'refineData/places_of_interest.json'
+json_file_path = '../refineData/places_of_interest.json'
 with open(json_file_path, 'r') as file:
     json_data = json.load(file)
 
 # Load and parse the ODS file
-file_path = 'refineData/final_busStop_density.ods'
+file_path = '../refineData/final_busStop_density.ods'
 ods_data = pd.read_excel(file_path, engine='odf')
 
 # Initialize the map centered around Bamberg, assuming that’s the region for these coordinates
@@ -42,7 +42,7 @@ for entry in json_data:
     ).add_to(m)
 
 # Save the map to an HTML file and display it
-map_file = 'templates/coordinates_map.html'
+map_file = '../templates/coordinates_map.html'
 m.save(map_file)
 
 # Open the saved map

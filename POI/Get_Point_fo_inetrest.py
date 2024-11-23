@@ -13,7 +13,7 @@ def get_places_of_interest(api_key, location, radius=15000, place_types=None, ke
     if place_types is None:
         place_types = ['tourist_attraction', 'museum', 'school', 'university', 'point_of_interest', 'atm', 'bank',
                        'train_station', 'supermarket', 'shopping_mall', 'pharmacy', 'library', 'department_store',
-                       'church', 'airport', 'Markets', 'Hospitals', 'Clinics', 'Historical monuments', 'Castles']
+                       'church', 'airport', 'Markets', 'Hospitals', 'Clinics', 'Historical monuments', 'Castles', 'Park']
     if keywords is None:
         keywords = ['historical', 'landmark', 'monument', 'tourist']
 

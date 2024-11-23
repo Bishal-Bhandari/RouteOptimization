@@ -69,5 +69,5 @@ def main():
     print("POI data saved as 'osm_poi_data.ods' and map saved as 'osm_poi_map.html'.")
 
 
-# Run the program
-main()
+if __name__ == "__main__":
+    main()

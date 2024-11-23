@@ -1,4 +1,6 @@
 import json
+import os
+import webbrowser
 
 import requests
 import pandas as pd
@@ -63,27 +65,35 @@ def display_pois_on_map(pois):
 def main():
     # Fetch POIs
     pois = get_pois(location, radius, poi_type, api_key)
-
+    print(pois)
     # Extract details and save to list
     poi_data = []
     for poi in pois:
-        details = get_poi_details(poi['place_id'], api_key)
+        details = get_poi_details(poi['place_id'], api_keys)
+
+        # Skip if geometry is missing
+        if 'geometry' not in details:
+            print(f"Skipping place_id {poi['place_id']} due to missing geometry.")
+            continue
+
+        # Collect data
         poi_data.append({
             'Name': details.get('name', 'N/A'),
             'Rating': details.get('rating', 'N/A'),
-            'Total Reviews': details.get('user_ratings_total', 'N/A'),
-            'Latitude': details['geometry']['location']['lat'],
-            'Longitude': details['geometry']['location']['lng'],
-            'Popular Times': details.get('popular_times', 'N/A')  # Popular times not always available
+            'Latitude': details.get('geometry', {}).get('location', {}).get('lat', 'N/A'),
+            'Longitude': details.get('geometry', {}).get('location', {}).get('lng', 'N/A'),
+            'Popular Times': details.get('popular_times', 'N/A')
         })
 
     # Save to ODS
-    save_to_ods(poi_data, "poi_data")
+    save_to_ods(poi_data, "refineData/poi_data")
 
     # Display on Folium map
-    map_ = display_pois_on_map(pois)
-    map_.save("poi_map.html")
-    print("POI data saved as 'poi_data.ods' and map saved as 'poi_map.html'.")
+    map_file = display_pois_on_map(pois)
+    map_file.save("templates/poi_map.html")
+    # Open the map
+    file_path = os.path.abspath(map_file)
+    webbrowser.open(f"file://{file_path}")
 
 
 # Run the program

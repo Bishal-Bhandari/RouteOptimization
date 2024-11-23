@@ -1,9 +1,25 @@
 import json
 import os
 import webbrowser
+from math import radians, cos, sin, sqrt, atan2
 
 import pandas as pd
 import folium
+
+
+# Calculate haversine distance
+def haversine(lat1, lon1, lat2, lon2):
+    """
+    Calculate the great-circle distance between two points
+    on the Earth's surface given their latitude and longitude.
+    """
+    R = 6371000  # Radius of Earth in meters
+    dlat = radians(lat2 - lat1)
+    dlon = radians(lon2 - lon1)
+    a = sin(dlat / 2)**2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon / 2)**2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    return R * c
+
 
 # Load and parse the JSON file
 json_file_path = '../refineData/places_of_interest.json'
@@ -17,7 +33,7 @@ ods_data = pd.read_excel(file_path, engine='odf')
 # Initialize the map centered around Bamberg, assuming that’s the region for these coordinates
 m = folium.Map(location=[49.8917, 10.8871], zoom_start=13)
 
-# Plot ODS coordinates as red dots
+# Plot bus stop locations as red dots
 for _, row in ods_data.iterrows():
     folium.CircleMarker(
         location=[row['Latitude'], row['Longitude']],
@@ -29,14 +45,26 @@ for _, row in ods_data.iterrows():
         tooltip=f"Bus Stop: {row['Stop name']}"
     ).add_to(m)
 
-# Plot JSON coordinates as blue dots with names
+# Check distance of POIs from bus stops and plot them
 for entry in json_data:
+    poi_lat, poi_lon = entry['latitude'], entry['longitude']
+    poi_color = 'green'  # Default color
+
+    # Check if any bus stop is within 200 meters
+    for _, row in ods_data.iterrows():
+        bus_stop_lat, bus_stop_lon = row['Latitude'], row['Longitude']
+        distance = haversine(poi_lat, poi_lon, bus_stop_lat, bus_stop_lon)
+        if distance <= 200:  # POI is within 200 meters of a bus stop
+            poi_color = 'blue'
+            break
+
+    # Plot the POI
     folium.CircleMarker(
-        location=[entry['latitude'], entry['longitude']],
+        location=[poi_lat, poi_lon],
         radius=5,
-        color='blue',
+        color=poi_color,
         fill=True,
-        fill_color='blue',
+        fill_color=poi_color,
         fill_opacity=0.6,
         tooltip=entry['name']
     ).add_to(m)

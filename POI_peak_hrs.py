@@ -2,72 +2,77 @@ import requests
 import pandas as pd
 import folium
 
-# Define search parameters
-location = [49.898813, 10.902763]  # Example: Bamberg, Germany
+# Google API key
+API_KEY = 'YOUR_GOOGLE_API_KEY'
+
+# Define the search location and radius
+location = '49.898813,10.902763'  # Example: Bamberg, Germany
 radius = 1000  # Radius in meters
-poi_type = "amenity=restaurant"  # Example: Restaurants
+poi_type = 'restaurant'  # Example: Fetch restaurants
 
+# Step 1: Fetch POIs using Places API
+def get_pois(location, radius, poi_type, api_key):
+    url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json"
+    params = {
+        'location': location,
+        'radius': radius,
+        'type': poi_type,
+        'key': api_key
+    }
+    response = requests.get(url, params=params)
+    return response.json()['results']
 
-# Step 1: Query Overpass API for POIs
-def fetch_osm_pois(location, radius, poi_type):
-    overpass_url = "https://overpass-api.de/api/interpreter"
-    lat, lon = location
-    query = f"""
-    [out:json];
-    (
-      node[{poi_type}](around:{radius},{lat},{lon});
-      way[{poi_type}](around:{radius},{lat},{lon});
-      relation[{poi_type}](around:{radius},{lat},{lon});
-    );
-    out center;  // Get the center coordinates for ways and relations
-    """
-    response = requests.get(overpass_url, params={'data': query})
-    response.raise_for_status()  # Raise exception for HTTP errors
-    return response.json()
+# Step 2: Fetch details for each POI
+def get_poi_details(place_id, api_key):
+    url = f"https://maps.googleapis.com/maps/api/place/details/json"
+    params = {
+        'place_id': place_id,
+        'fields': 'name,rating,user_ratings_total,geometry,opening_hours,popular_times',
+        'key': api_key
+    }
+    response = requests.get(url, params=params)
+    return response.json().get('result', {})
 
-
-# Step 2: Extract data from the Overpass response
-def process_osm_data(data):
-    pois = []
-    for element in data['elements']:
-        lat = element.get('lat') or element.get('center', {}).get('lat')
-        lon = element.get('lon') or element.get('center', {}).get('lon')
-        name = element.get('tags', {}).get('name', 'Unknown')
-        pois.append({'Name': name, 'Latitude': lat, 'Longitude': lon})
-    return pois
-
-
-# Step 3: Save data to ODS format
+# Step 3: Process and save data
 def save_to_ods(data, filename):
     df = pd.DataFrame(data)
     df.to_excel(f"{filename}.ods", index=False, engine="odf")
 
-
-# Step 4: Display POIs on a Folium map
-def display_pois_on_map(pois, location):
-    m = folium.Map(location=location, zoom_start=15)
+# Step 4: Display POIs on a map
+def display_pois_on_map(pois):
+    m = folium.Map(location=[float(location.split(',')[0]), float(location.split(',')[1])], zoom_start=15)
     for poi in pois:
-        name = poi['Name']
-        lat = poi['Latitude']
-        lon = poi['Longitude']
-        folium.Marker(location=[lat, lon], popup=name).add_to(m)
+        name = poi.get('name', 'Unknown')
+        lat = poi['geometry']['location']['lat']
+        lng = poi['geometry']['location']['lng']
+        folium.Marker(location=[lat, lng], popup=name).add_to(m)
     return m
-
 
 # Main workflow
 def main():
     # Fetch POIs
-    osm_data = fetch_osm_pois(location, radius, poi_type)
-    pois = process_osm_data(osm_data)
+    pois = get_pois(location, radius, poi_type, API_KEY)
 
-    # Save POIs to an ODS file
-    save_to_ods(pois, "osm_poi_data")
+    # Extract details and save to list
+    poi_data = []
+    for poi in pois:
+        details = get_poi_details(poi['place_id'], API_KEY)
+        poi_data.append({
+            'Name': details.get('name', 'N/A'),
+            'Rating': details.get('rating', 'N/A'),
+            'Total Reviews': details.get('user_ratings_total', 'N/A'),
+            'Latitude': details['geometry']['location']['lat'],
+            'Longitude': details['geometry']['location']['lng'],
+            'Popular Times': details.get('popular_times', 'N/A')  # Popular times not always available
+        })
 
-    # Display POIs on a Folium map
-    map_ = display_pois_on_map(pois, location)
-    map_.save("osm_poi_map.html")
-    print("POI data saved as 'osm_poi_data.ods' and map saved as 'osm_poi_map.html'.")
+    # Save to ODS
+    save_to_ods(poi_data, "poi_data")
 
+    # Display on Folium map
+    map_ = display_pois_on_map(pois)
+    map_.save("poi_map.html")
+    print("POI data saved as 'poi_data.ods' and map saved as 'poi_map.html'.")
 
-if __name__ == "__main__":
-    main()
+# Run the program
+main()

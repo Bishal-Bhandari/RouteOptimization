@@ -24,6 +24,8 @@ place_type = "point_of_interest"
 # Initialize a list to store the results
 poi_results = []
 
+# Set to track already saved POIs (use latitude and longitude as unique identifiers)
+processed_pois = set()
 
 # Function to search nearby places using Google Maps API
 def get_nearby_places(lat, lng, radius, place_type):
@@ -55,18 +57,30 @@ for _, row in bus_stops.iterrows():
 
     if places_data and "results" in places_data:
         for place in places_data["results"]:
+            poi_lat = place["geometry"]["location"]["lat"]
+            poi_lon = place["geometry"]["location"]["lng"]
+            poi_key = (poi_lat, poi_lon)  # Unique identifier for the POI
+
+            # Skip if POI is already processed
+            if poi_key in processed_pois:
+                continue
+
+            # Add POI to the results
             poi_results.append({
                 "Bus Stop": bus_stop_name,
                 "Bus Stop Latitude": latitude,
                 "Bus Stop Longitude": longitude,
                 "POI Name": place.get("name", "Unknown"),
-                "POI Latitude": place["geometry"]["location"]["lat"],
-                "POI Longitude": place["geometry"]["location"]["lng"],
+                "POI Latitude": poi_lat,
+                "POI Longitude": poi_lon,
                 "POI Address": place.get("vicinity", "Unknown")
             })
 
+            # Mark this POI as processed
+            processed_pois.add(poi_key)
+
     # Pause to respect API rate limits
-    time.sleep(1)  # Adjust based on your API usage limits
+    # time.sleep(1)  # Adjust based on your API usage limits
 
 # Convert the results into a DataFrame
 poi_df = pd.DataFrame(poi_results)

@@ -9,10 +9,6 @@ import folium
 
 # Calculate haversine distance
 def haversine(lat1, lon1, lat2, lon2):
-    """
-    Calculate the great-circle distance between two points
-    on the Earth's surface given their latitude and longitude.
-    """
     R = 6371000  # Radius of Earth in meters
     dlat = radians(lat2 - lat1)
     dlon = radians(lon2 - lon1)
@@ -21,19 +17,19 @@ def haversine(lat1, lon1, lat2, lon2):
     return R * c
 
 
-# Load and parse the JSON file
+# JSON file
 json_file_path = '../refineData/places_of_interest.json'
 with open(json_file_path, 'r') as file:
     json_data = json.load(file)
 
-# Load and parse the ODS file
+# ODS file
 file_path = '../refineData/final_busStop_density.ods'
 ods_data = pd.read_excel(file_path, engine='odf')
 
-# Initialize the map centered around Bamberg, assuming that’s the region for these coordinates
+# Initialize the map
 m = folium.Map(location=[49.8917, 10.8871], zoom_start=13)
 
-# Plot bus stop locations as red dots
+# Plot bus stop
 for _, row in ods_data.iterrows():
     folium.CircleMarker(
         location=[row['Latitude'], row['Longitude']],
@@ -45,16 +41,16 @@ for _, row in ods_data.iterrows():
         tooltip=f"Bus Stop: {row['Stop name']}"
     ).add_to(m)
 
-# Check distance of POIs from bus stops and plot them
+# Check distance of POIs from bus stops
 for entry in json_data:
     poi_lat, poi_lon = entry['latitude'], entry['longitude']
     poi_color = 'green'  # Default color
 
-    # Check if any bus stop is within 200 meters
+    # Check if any bus stop is within 500 meters
     for _, row in ods_data.iterrows():
         bus_stop_lat, bus_stop_lon = row['Latitude'], row['Longitude']
         distance = haversine(poi_lat, poi_lon, bus_stop_lat, bus_stop_lon)
-        if distance <= 200:  # POI is within 200 meters of a bus stop
+        if distance <= 500:  # POI is within 200 meters of a bus stop
             poi_color = 'blue'
             break
 
@@ -72,7 +68,5 @@ for entry in json_data:
 # Save the map to an HTML file and display it
 map_file = '../templates/coordinates_map.html'
 m.save(map_file)
-
-# Open the saved map
 file_path = os.path.abspath(map_file)
 webbrowser.open(f"file://{file_path}")

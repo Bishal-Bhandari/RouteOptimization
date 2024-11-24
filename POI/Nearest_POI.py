@@ -4,30 +4,33 @@ import requests
 import pandas as pd
 import time
 
-# Load bus stop locations from your ODS file
+# ODS file
 file_path = '../refineData/final_busStop_density.ods'
 bus_stops = pd.read_excel(file_path, engine='odf')
 
-# Load the API keys from the JSON file
+# Load the API keys
 with open('../api_keys.json') as json_file:
     api_keys = json.load(json_file)
 
 # Google Maps API key
 api_key = api_keys['Google_API']['API_key']
 
-# Define the search radius (500 meters)
+# Radius
 radius = 500
 
-# Define the type of places you want to search for (e.g., 'point_of_interest', 'restaurant', etc.)
-place_type = "point_of_interest"
+# Type of places
+place_type = ['tourist_attraction', 'museum', 'school', 'university', 'point_of_interest', 'atm', 'bank',
+              'train_station', 'supermarket', 'shopping_mall', 'pharmacy', 'library', 'department_store',
+              'church', 'airport', 'Markets', 'Hospitals', 'Clinics', 'Historical monuments', 'Castles', 'Park']
 
-# Initialize a list to store the results
+# Store the results
 poi_results = []
 
-# Set to track already saved POIs (use latitude and longitude as unique identifiers)
+# Set to track saved POIs
 processed_pois = set()
 
-# Function to search nearby places using Google Maps API
+
+# Search POI
 def get_nearby_places(lat, lng, radius, place_type):
     url = (
         "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
@@ -46,7 +49,7 @@ def get_nearby_places(lat, lng, radius, place_type):
         return None
 
 
-# Iterate over each bus stop
+# Loop eacj bus stop
 for _, row in bus_stops.iterrows():
     bus_stop_name = row['Stop name']
     latitude = row['Latitude']
@@ -61,11 +64,11 @@ for _, row in bus_stops.iterrows():
             poi_lon = place["geometry"]["location"]["lng"]
             poi_key = (poi_lat, poi_lon)  # Unique identifier for the POI
 
-            # Skip if POI is already processed
+            # Skip POI if existed
             if poi_key in processed_pois:
                 continue
 
-            # Add POI to the results
+            # Add POI
             poi_results.append({
                 "Bus Stop": bus_stop_name,
                 "Bus Stop Latitude": latitude,
@@ -79,10 +82,10 @@ for _, row in bus_stops.iterrows():
             # Mark this POI as processed
             processed_pois.add(poi_key)
 
-    # Pause to respect API rate limits
+    # API rate limits
     # time.sleep(1)  # Adjust based on your API usage limits
 
-# Convert the results into a DataFrame
+# Results into a DataFrame
 poi_df = pd.DataFrame(poi_results)
 
 # Save the DataFrame to an ODS file

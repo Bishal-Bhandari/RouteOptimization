@@ -19,7 +19,6 @@ try:
 
     # Parse JSON response
     data = response.json()
-    print("Response received:", data)
 
     # Check if "features" exists in data
     if "features" in data:

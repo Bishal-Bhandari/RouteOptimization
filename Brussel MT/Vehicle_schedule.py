@@ -26,7 +26,5 @@ try:
     ods_file = "../refineData/Brussel MT/Vehicle_schedule.ods"
     p.save_as(records=data, dest_file_name=ods_file)
 
-except requests.exceptions.JSONDecodeError:
-    print("Failed to decode JSON response.")
 except Exception as e:
     print(f"An error occurred: {e}")

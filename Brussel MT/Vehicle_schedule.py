@@ -22,14 +22,9 @@ try:
     # Parse JSON response
     data = response.json()
 
-        # Save GeoDataFrame to ODS format
-        ods_file = "../refineData/Brussel MT/Vehicle_schedule.ods"
-        df = pd.DataFrame(gdf.drop(columns="geometry"))  # Drop geometry for ODS compatibility
-        records = df.to_dict(orient='records')
-        p.save_as(records=records, dest_file_name=ods_file)
-
-    else:
-        print("The 'features' key is missing in the response.")
+    # Save GeoDataFrame to ODS format
+    ods_file = "../refineData/Brussel MT/Vehicle_schedule.ods"
+    p.save_as(records=data, dest_file_name=ods_file)
 
 except requests.exceptions.JSONDecodeError:
     print("Failed to decode JSON response.")

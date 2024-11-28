@@ -82,6 +82,7 @@ for _, row in bus_stops.iterrows():
                 "Bus Stop Latitude": latitude,
                 "Bus Stop Longitude": longitude,
                 "POI Name": place.get("name", "Unknown"),
+
                 "POI Latitude": poi_lat,
                 "POI Longitude": poi_lon,
                 "POI Address": place.get("vicinity", "Unknown")

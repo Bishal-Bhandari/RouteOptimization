@@ -102,6 +102,7 @@ for _, row in bus_stops.iterrows():
 
 # Results into a DataFrame
 poi_df = pd.DataFrame(poi_results)
+
 # Save the DataFrame to an ODS file
 output_path = '../refineData/pois_rank_with_busStop.ods'
 poi_df.to_excel(output_path, engine='odf', index=False)

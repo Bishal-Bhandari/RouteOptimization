@@ -1,12 +1,7 @@
+import folium
 import json
-
 import requests
 import pandas as pd
-import time
-
-# ODS file
-file_path = '../refineData/final_busStop_density.ods'
-bus_stops = pd.read_excel(file_path, engine='odf')
 
 # Load the API keys
 with open('../api_keys.json') as json_file:
@@ -15,10 +10,12 @@ with open('../api_keys.json') as json_file:
 # Google Maps API key
 api_key = api_keys['Google_API']['API_key']
 
-# Radius
-radius = 500
+# Bamberg coordinates and radius
+latitude = 49.8925
+longitude = 10.8871
+radius = 5000  # Radius in meters
 
-# Type of places
+# Place types dictionary
 place_type = {
     1: "Train Stations", 2: "Shopping Centers", 3: "Bus Stops", 4: "Airports", 5: "Schools", 6: "Universities",
     7: "Hospitals", 8: "Residential Areas", 9: "Tourist Attractions", 10: "Restaurants", 11: "Office Complexes",
@@ -34,19 +31,13 @@ place_type = {
 # Store the results
 poi_results = []
 
-# Set to track saved POIs
-processed_pois = set()
-
-
-# Search POI
-def get_nearby_places(lat, lng, radius, place_type):
-    url = (
-        "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
-    )
+# Search POIs
+def get_nearby_places(lat, lng, radius, place_keyword):
+    url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
     params = {
         "location": f"{lat},{lng}",
         "radius": radius,
-        "type": list(place_type.values()),
+        "keyword": place_keyword,
         "key": api_key,
     }
     response = requests.get(url, params=params)
@@ -56,57 +47,40 @@ def get_nearby_places(lat, lng, radius, place_type):
         print(f"Error: {response.status_code}")
         return None
 
-
-# Loop each bus stop
-for _, row in bus_stops.iterrows():
-    bus_stop_name = row['Stop name']
-    latitude = row['Latitude']
-    longitude = row['Longitude']
-
-    # Get nearby POIs
-    places_data = get_nearby_places(latitude, longitude, radius, place_type)
-
+# Loop through place types
+for key, value in place_type.items():
+    places_data = get_nearby_places(latitude, longitude, radius, value)
     if places_data and "results" in places_data:
         for place in places_data["results"]:
-            poi_lat = place["geometry"]["location"]["lat"]
-            poi_lon = place["geometry"]["location"]["lng"]
-            poi_key = (poi_lat, poi_lon)  # Unique identifier for the POI
-            poi_type_raw = place["types"][0]  # Raw type from the API response
-
-            # Match API type to the place_type dictionary
-            poi_rank = None
-            poi_type = "Unknown"
-            for key, value in place_type.items():
-                if value.lower().replace(" ", "_") in poi_type_raw:  # Match by normalized type name
-                    poi_rank = key
-                    poi_type = value
-                    break
-
-            # Skip POI if already processed
-            if poi_key in processed_pois:
-                continue
-
-            # Add POI to results
             poi_results.append({
-                "Bus Stop": bus_stop_name,
-                "Bus Stop Latitude": latitude,
-                "Bus Stop Longitude": longitude,
                 "POI Name": place.get("name", "Unknown"),
-                "POI Rank": poi_rank if poi_rank is not None else "Unknown",
-                "POI Type": poi_type,
-                "POI Latitude": poi_lat,
-                "POI Longitude": poi_lon,
-                "POI Address": place.get("vicinity", "Unknown")
+                "POI Type": value,
+                "POI Rank": key,
+                "POI Latitude": place["geometry"]["location"]["lat"],
+                "POI Longitude": place["geometry"]["location"]["lng"],
+                "POI Address": place.get("vicinity", "Unknown"),
             })
-
-            # Mark this POI as processed
-            processed_pois.add(poi_key)
 
 # Results into a DataFrame
 poi_df = pd.DataFrame(poi_results)
 
 # Save the DataFrame to an ODS file
-output_path = '../refineData/pois_rank_with_busStop.ods'
+output_path = '../refineData/bamberg_poi_rank_data.ods'
 poi_df.to_excel(output_path, engine='odf', index=False)
-
 print(f"Data saved to {output_path}")
+
+# Create a Folium map
+m = folium.Map(location=[latitude, longitude], zoom_start=13)
+
+# Add POIs to the map
+for _, row in poi_df.iterrows():
+    folium.Marker(
+        location=[row["POI Latitude"], row["POI Longitude"]],
+        popup=f"{row['POI Name']} ({row['POI Type']})",
+        tooltip=row['POI Name']
+    ).add_to(m)
+
+# Save the map as an HTML file
+map_output_path = '../refineData/bamberg_poi_map.html'
+m.save(map_output_path)
+print(f"Map saved to {map_output_path}")

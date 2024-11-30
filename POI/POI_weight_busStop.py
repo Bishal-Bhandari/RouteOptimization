@@ -71,27 +71,29 @@ for _, row in bus_stops.iterrows():
             poi_lat = place["geometry"]["location"]["lat"]
             poi_lon = place["geometry"]["location"]["lng"]
             poi_key = (poi_lat, poi_lon)  # Unique identifier for the POI
-            poi_type_raw = place["types"][0]
+            poi_type_raw = place["types"][0]  # Raw type from the API response
 
-            # Find the rank from the dictionary (reverse lookup)
+            # Match API type to the place_type dictionary
             poi_rank = None
+            poi_type = "Unknown"
             for key, value in place_type.items():
-                if value.lower().replace(" ", "_") in poi_type_raw:  # Match by type name
+                if value.lower().replace(" ", "_") in poi_type_raw:  # Match by normalized type name
                     poi_rank = key
+                    poi_type = value
                     break
 
             # Skip POI if already processed
             if poi_key in processed_pois:
                 continue
 
-            # Add POI
+            # Add POI to results
             poi_results.append({
                 "Bus Stop": bus_stop_name,
                 "Bus Stop Latitude": latitude,
                 "Bus Stop Longitude": longitude,
                 "POI Name": place.get("name", "Unknown"),
                 "POI Rank": poi_rank if poi_rank is not None else "Unknown",
-                "POI Type": poi_type_raw,
+                "POI Type": poi_type,
                 "POI Latitude": poi_lat,
                 "POI Longitude": poi_lon,
                 "POI Address": place.get("vicinity", "Unknown")

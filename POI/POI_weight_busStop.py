@@ -57,7 +57,7 @@ def get_nearby_places(lat, lng, radius, place_type):
         return None
 
 
-# Loop eacj bus stop
+# Loop each bus stop
 for _, row in bus_stops.iterrows():
     bus_stop_name = row['Stop name']
     latitude = row['Latitude']

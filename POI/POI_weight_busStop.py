@@ -6,18 +6,6 @@ import json
 import requests
 import pandas as pd
 
-# Load the API keys
-with open('../api_keys.json') as json_file:
-    api_keys = json.load(json_file)
-
-# Google Maps API key
-api_key = api_keys['Google_API']['API_key']
-
-# Bamberg coordinates and radius
-latitude = 49.8925
-longitude = 10.8871
-radius = 5000  # Radius in meters
-
 # Place types dictionary
 place_type = {
     1: "Train Stations", 2: "Shopping Centers", 4: "Airports", 5: "Schools", 6: "Universities",
@@ -36,10 +24,10 @@ poi_results = []
 
 
 # Search POIs
-def get_nearby_places(lat, lng, radius, place_keyword):
+def get_nearby_places(lat, lon, radius, place_keyword, api_key):
     url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
     params = {
-        "location": f"{lat},{lng}",
+        "location": f"{lat},{lon}",
         "radius": radius,
         "keyword": place_keyword,
         "key": api_key,
@@ -52,41 +40,59 @@ def get_nearby_places(lat, lng, radius, place_keyword):
         return None
 
 
-# Loop through place types
-for key, value in place_type.items():
-    places_data = get_nearby_places(latitude, longitude, radius, value)
-    if places_data and "results" in places_data:
-        for place in places_data["results"]:
-            poi_results.append({
-                "POI Name": place.get("name", "Unknown"),
-                "POI Type": value,
-                "POI Rank": key,
-                "POI Latitude": place["geometry"]["location"]["lat"],
-                "POI Longitude": place["geometry"]["location"]["lng"],
-                "POI Address": place.get("vicinity", "Unknown"),
-            })
+def plot_and_save(api_key, location, radius=5000):
+    # Parse location
+    lat, lon = map(float, location.split(','))
+    # Loop through place types
+    for key, value in place_type.items():
+        places_data = get_nearby_places(lat, lon, radius, value, api_key)
+        if places_data and "results" in places_data:
+            for place in places_data["results"]:
+                poi_results.append({
+                    "POI Name": place.get("name", "Unknown"),
+                    "POI Type": value,
+                    "POI Rank": key,
+                    "POI Latitude": place["geometry"]["location"]["lat"],
+                    "POI Longitude": place["geometry"]["location"]["lng"],
+                    "POI Address": place.get("vicinity", "Unknown"),
+                })
 
-# Results into a DataFrame
-poi_df = pd.DataFrame(poi_results)
+    # Results into a DataFrame
+    poi_df = pd.DataFrame(poi_results)
 
-# Save the DataFrame to an ODS file
-output_path = '../refineData/bamberg_poi_rank_data.ods'
-poi_df.to_excel(output_path, engine='odf', index=False)
-print(f"Data saved to {output_path}")
+    # Save the DataFrame to an ODS file
+    output_path = '../refineData/bamberg_poi_rank_data.ods'
+    poi_df.to_excel(output_path, engine='odf', index=False)
+    print(f"Data saved to {output_path}")
 
-# Create a Folium map
-m = folium.Map(location=[latitude, longitude], zoom_start=13)
+    # Create a Folium map
+    m = folium.Map(location=[lat, lon], zoom_start=13)
 
-# Add POIs to the map
-for _, row in poi_df.iterrows():
-    folium.Marker(
-        location=[row["POI Latitude"], row["POI Longitude"]],
-        popup=f"{row['POI Name']} ({row['POI Type']})",
-        tooltip=row['POI Name']
-    ).add_to(m)
+    # Add POIs to the map
+    for _, row in poi_df.iterrows():
+        folium.Marker(
+            location=[row["POI Latitude"], row["POI Longitude"]],
+            popup=f"{row['POI Name']} ({row['POI Type']})",
+            tooltip=row['POI Name']
+        ).add_to(m)
 
-# Save the map as an HTML file
-map_output_path = '../templates/bamberg_poi_map.html'
-m.save(map_output_path)
-file_path = os.path.abspath(map_output_path)
-webbrowser.open(f"file://{file_path}")
+    # Save the map as an HTML file
+    map_output_path = '../templates/bamberg_poi_map.html'
+    m.save(map_output_path)
+    file_path = os.path.abspath(map_output_path)
+    webbrowser.open(f"file://{file_path}")
+
+
+def main():
+    # Load the API keys from the JSON file
+    with open('../api_keys.json') as json_file:
+        api_keys = json.load(json_file)
+
+    # Google Maps API key
+    api_key = api_keys['Google_API']['API_key']
+    location = "49.89517023418082, 10.885055540762723"  # Bamberg
+    plot_and_save(api_key, location)
+
+
+if __name__ == "__main__":
+    main()

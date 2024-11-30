@@ -7,6 +7,7 @@ import requests
 import pandas as pd
 
 # Place types dictionary
+# key: ["POI", "Popularity Rank", "Similarity of POI Rank" ]
 place_type = {
     1: "Train Stations", 2: "Shopping Centers", 4: "Airports", 5: "Schools", 6: "Universities",
     7: "Hospitals", 8: "Residential Areas", 9: "Tourist Attractions", 10: "Restaurants", 11: "Office Complexes",

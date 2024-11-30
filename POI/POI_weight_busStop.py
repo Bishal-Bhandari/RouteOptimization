@@ -8,16 +8,20 @@ import pandas as pd
 
 # Place types dictionary
 # key: ["POI", "Popularity Rank", "Similarity of POI Rank" ]
+# Popularity Rank = 1 highest and 5 lowest
+# Similarity of POI Rank= Transportation and Infrastructure:1, Education and Knowledge:2, Healthcare and Emergency Services:3,
+# Religious and Cultural Sites:4, Commercial and Business Centers:5, Entertainment:6, Dining and Hospitality:7, Public Spaces:8, Administrative Buildings:9
 place_type = {
-    1: "Train Stations", 2: "Shopping Centers", 4: "Airports", 5: "Schools", 6: "Universities",
-    7: "Hospitals", 8: "Residential Areas", 9: "Tourist Attractions", 10: "Restaurants", 11: "Office Complexes",
-    12: "Parks", 13: "Museums", 14: "Cinemas", 15: "Markets", 16: "Nightclubs", 17: "Sports Arenas", 18: "Hotels",
-    19: "Temples", 20: "Churches", 21: "City Halls", 22: "Playgrounds", 23: "Cafes", 24: "Libraries",
-    25: "Bus Depots", 26: "Parking Lots", 27: "Historical Sites", 28: "Monuments", 29: "Zoos", 30: "Art Galleries",
-    31: "Convention Centers", 32: "Beaches", 33: "Harbors", 34: "Cemeteries", 35: "Casinos", 36: "Gyms",
-    37: "Government Offices", 38: "Fire Stations", 39: "Police Stations", 40: "Prisons", 41: "Post Offices",
-    42: "Stadiums", 43: "Amusement Parks", 44: "Bridges", 45: "Campgrounds", 46: "Embassies", 47: "Warehouses",
-    48: "Theaters", 49: "Golf Courses",
+    1: ["Train Stations",1,1], 2: ["Shopping Centers",1,5], 4: ["Airports",1,1], 5: ["Schools",1,2],
+    6: ["Universities",1,2], 7: ["Hospitals",1,3], 8: ["Residential Areas",1,8], 9: ["Tourist Attractions",1,6], 10: ["Restaurants",1,7],
+    11: ["Office Complexes",2,5], 12: ["Parks",2,8], 13: ["Museums",2,2], 14: ["Cinemas",2,6], 15: ["Markets",2,5],
+    16: ["Nightclubs",2,6], 17: ["Sports Arenas",2,6], 18: ["Hotels",2,7], 19: ["Temples",2,4], 20: ["Churches",2,4],
+    21: ["City Halls",3,9], 22: ["Playgrounds",3,8], 23: ["Cafes",3,7], 24: ["Libraries",3,2], 25: ["Bus Depots",3,1],
+    26: ["Parking Lots",3,1], 27: ["Historical Sites",3,4], 28: ["Monuments",3,4], 29: ["Zoos",3,8], 30: ["Art Galleries",3,2],
+    31: ["Convention Centers",4,5], 32: ["Beaches",4,8], 33: ["Harbors",4,1], 34: ["Cemeteries",4,4], 35: ["Casinos",4,5],
+    36: ["Gyms",4,6], 37: ["Government Offices",4,9], 38: ["Fire Stations",4,3], 39: ["Police Stations",4,3], 40: ["Prisons",5,9],
+    41: ["Post Offices",5,9], 42: ["Stadiums",5,6], 43: ["Amusement Parks",5,6], 44: ["Bridges",5,1], 45: ["Campgrounds",5,8],
+    46: ["Embassies",5,9], 47: ["Warehouses",5,5], 48: ["Theaters",5,6], 49: ["Golf Courses",5,6]
 }
 
 # Store the results
@@ -46,7 +50,7 @@ def plot_and_save(api_key, location, radius=5000):
     lat, lon = map(float, location.split(','))
     # Loop through place types
     for key, value in place_type.items():
-        places_data = get_nearby_places(lat, lon, radius, value, api_key)
+        places_data = get_nearby_places(lat, lon, radius, value[0], api_key)
         if places_data and "results" in places_data:
             for place in places_data["results"]:
                 poi_results.append({

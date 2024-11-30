@@ -20,7 +20,7 @@ radius = 5000  # Radius in meters
 
 # Place types dictionary
 place_type = {
-    1: "Train Stations", 2: "Shopping Centers", 3: "Bus Stops", 4: "Airports", 5: "Schools", 6: "Universities",
+    1: "Train Stations", 2: "Shopping Centers", 4: "Airports", 5: "Schools", 6: "Universities",
     7: "Hospitals", 8: "Residential Areas", 9: "Tourist Attractions", 10: "Restaurants", 11: "Office Complexes",
     12: "Parks", 13: "Museums", 14: "Cinemas", 15: "Markets", 16: "Nightclubs", 17: "Sports Arenas", 18: "Hotels",
     19: "Temples", 20: "Churches", 21: "City Halls", 22: "Playgrounds", 23: "Cafes", 24: "Libraries",
@@ -33,6 +33,7 @@ place_type = {
 
 # Store the results
 poi_results = []
+
 
 # Search POIs
 def get_nearby_places(lat, lng, radius, place_keyword):
@@ -49,6 +50,7 @@ def get_nearby_places(lat, lng, radius, place_keyword):
     else:
         print(f"Error: {response.status_code}")
         return None
+
 
 # Loop through place types
 for key, value in place_type.items():

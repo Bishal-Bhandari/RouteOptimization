@@ -71,8 +71,16 @@ for _, row in bus_stops.iterrows():
             poi_lat = place["geometry"]["location"]["lat"]
             poi_lon = place["geometry"]["location"]["lng"]
             poi_key = (poi_lat, poi_lon)  # Unique identifier for the POI
-            poi_type = place["types"][0]
-            # Skip POI if existed
+            poi_type_raw = place["types"][0]
+
+            # Find the rank from the dictionary (reverse lookup)
+            poi_rank = None
+            for key, value in place_type.items():
+                if value.lower().replace(" ", "_") in poi_type_raw:  # Match by type name
+                    poi_rank = key
+                    break
+
+            # Skip POI if already processed
             if poi_key in processed_pois:
                 continue
 
@@ -82,7 +90,8 @@ for _, row in bus_stops.iterrows():
                 "Bus Stop Latitude": latitude,
                 "Bus Stop Longitude": longitude,
                 "POI Name": place.get("name", "Unknown"),
-                "POI Rank": poi_type,
+                "POI Rank": poi_rank if poi_rank is not None else "Unknown",
+                "POI Type": poi_type_raw,
                 "POI Latitude": poi_lat,
                 "POI Longitude": poi_lon,
                 "POI Address": place.get("vicinity", "Unknown")
@@ -91,12 +100,8 @@ for _, row in bus_stops.iterrows():
             # Mark this POI as processed
             processed_pois.add(poi_key)
 
-    # API rate limits
-    # time.sleep(1)  # Adjust based on your API usage limits
-
 # Results into a DataFrame
 poi_df = pd.DataFrame(poi_results)
-
 # Save the DataFrame to an ODS file
 output_path = '../refineData/pois_rank_with_busStop.ods'
 poi_df.to_excel(output_path, engine='odf', index=False)

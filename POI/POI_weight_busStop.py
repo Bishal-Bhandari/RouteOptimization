@@ -1,3 +1,6 @@
+import os
+import webbrowser
+
 import folium
 import json
 import requests
@@ -81,6 +84,7 @@ for _, row in poi_df.iterrows():
     ).add_to(m)
 
 # Save the map as an HTML file
-map_output_path = '../refineData/bamberg_poi_map.html'
+map_output_path = '../templates/bamberg_poi_map.html'
 m.save(map_output_path)
-print(f"Map saved to {map_output_path}")
+file_path = os.path.abspath(map_output_path)
+webbrowser.open(f"file://{file_path}")

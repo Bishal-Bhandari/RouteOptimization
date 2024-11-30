@@ -71,7 +71,7 @@ for _, row in bus_stops.iterrows():
             poi_lat = place["geometry"]["location"]["lat"]
             poi_lon = place["geometry"]["location"]["lng"]
             poi_key = (poi_lat, poi_lon)  # Unique identifier for the POI
-
+            poi_type = place["types"][0]
             # Skip POI if existed
             if poi_key in processed_pois:
                 continue
@@ -82,7 +82,7 @@ for _, row in bus_stops.iterrows():
                 "Bus Stop Latitude": latitude,
                 "Bus Stop Longitude": longitude,
                 "POI Name": place.get("name", "Unknown"),
-
+                "POI Rank": poi_type,
                 "POI Latitude": poi_lat,
                 "POI Longitude": poi_lon,
                 "POI Address": place.get("vicinity", "Unknown")
@@ -98,7 +98,7 @@ for _, row in bus_stops.iterrows():
 poi_df = pd.DataFrame(poi_results)
 
 # Save the DataFrame to an ODS file
-output_path = '../refineData/bus_stop_nearby_pois.ods'
+output_path = '../refineData/pois_rank_with_busStop.ods'
 poi_df.to_excel(output_path, engine='odf', index=False)
 
 print(f"Data saved to {output_path}")

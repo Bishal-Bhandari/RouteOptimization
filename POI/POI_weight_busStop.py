@@ -64,7 +64,9 @@ def plot_and_save(api_key, location, radius=5000):
             for place in places_data["results"]:
                 poi_results.append({
                     "POI Name": place.get("name", "Unknown"),
-                    "POI Type": value,
+                    "POI Type": value[0],
+                    "POI Popularity": value[1],
+                    "POI Similarity": value[2],
                     "POI Rank": key,
                     "POI Latitude": place["geometry"]["location"]["lat"],
                     "POI Longitude": place["geometry"]["location"]["lng"],

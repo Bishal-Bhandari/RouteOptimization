@@ -9,19 +9,28 @@ import pandas as pd
 # Place types dictionary
 # key: ["POI", "Popularity Rank", "Similarity of POI Rank" ]
 # Popularity Rank = 1 highest and 5 lowest
-# Similarity of POI Rank= Transportation and Infrastructure:1, Education and Knowledge:2, Healthcare and Emergency Services:3,
-# Religious and Cultural Sites:4, Commercial and Business Centers:5, Entertainment:6, Dining and Hospitality:7, Public Spaces:8, Administrative Buildings:9
+# Similarity of POI Rank= Transportation and Infrastructure:1, Education and Knowledge:2,
+# Healthcare and Emergency Services:3, Religious and Cultural Sites:4, Commercial Centers:5, Entertainment:6,
+# Dining and Hospitality:7, Public Spaces:8, Administrative Buildings:9
 place_type = {
-    1: ["Train Stations",1,1], 2: ["Shopping Centers",1,5], 4: ["Airports",1,1], 5: ["Schools",1,2],
-    6: ["Universities",1,2], 7: ["Hospitals",1,3], 8: ["Residential Areas",1,8], 9: ["Tourist Attractions",1,6], 10: ["Restaurants",1,7],
-    11: ["Office Complexes",2,5], 12: ["Parks",2,8], 13: ["Museums",2,2], 14: ["Cinemas",2,6], 15: ["Markets",2,5],
-    16: ["Nightclubs",2,6], 17: ["Sports Arenas",2,6], 18: ["Hotels",2,7], 19: ["Temples",2,4], 20: ["Churches",2,4],
-    21: ["City Halls",3,9], 22: ["Playgrounds",3,8], 23: ["Cafes",3,7], 24: ["Libraries",3,2], 25: ["Bus Depots",3,1],
-    26: ["Parking Lots",3,1], 27: ["Historical Sites",3,4], 28: ["Monuments",3,4], 29: ["Zoos",3,8], 30: ["Art Galleries",3,2],
-    31: ["Convention Centers",4,5], 32: ["Beaches",4,8], 33: ["Harbors",4,1], 34: ["Cemeteries",4,4], 35: ["Casinos",4,5],
-    36: ["Gyms",4,6], 37: ["Government Offices",4,9], 38: ["Fire Stations",4,3], 39: ["Police Stations",4,3], 40: ["Prisons",5,9],
-    41: ["Post Offices",5,9], 42: ["Stadiums",5,6], 43: ["Amusement Parks",5,6], 44: ["Bridges",5,1], 45: ["Campgrounds",5,8],
-    46: ["Embassies",5,9], 47: ["Warehouses",5,5], 48: ["Theaters",5,6], 49: ["Golf Courses",5,6]
+    1: ["Train Stations", 1, 1], 2: ["Shopping Centers", 1, 5], 4: ["Airports", 1, 1], 5: ["Schools", 1, 2],
+    6: ["Universities", 1, 2], 7: ["Hospitals", 1, 3], 8: ["Residential Areas", 1, 8], 9: ["Tourist Attractions", 1, 6],
+    10: ["Restaurants", 1, 7],
+    11: ["Office Complexes", 2, 5], 12: ["Parks", 2, 8], 13: ["Museums", 2, 2], 14: ["Cinemas", 2, 6],
+    15: ["Markets", 2, 5],
+    16: ["Nightclubs", 2, 6], 17: ["Sports Arenas", 2, 6], 18: ["Hotels", 2, 7], 19: ["Temples", 2, 4],
+    20: ["Churches", 2, 4],
+    21: ["City Halls", 3, 9], 22: ["Playgrounds", 3, 8], 23: ["Cafes", 3, 7], 24: ["Libraries", 3, 2],
+    25: ["Bus Depots", 3, 1],
+    26: ["Parking Lots", 3, 1], 27: ["Historical Sites", 3, 4], 28: ["Monuments", 3, 4], 29: ["Zoos", 3, 8],
+    30: ["Art Galleries", 3, 2],
+    31: ["Convention Centers", 4, 5], 32: ["Beaches", 4, 8], 33: ["Harbors", 4, 1], 34: ["Cemeteries", 4, 4],
+    35: ["Casinos", 4, 5],
+    36: ["Gyms", 4, 6], 37: ["Government Offices", 4, 9], 38: ["Fire Stations", 4, 3], 39: ["Police Stations", 4, 3],
+    40: ["Prisons", 5, 9],
+    41: ["Post Offices", 5, 9], 42: ["Stadiums", 5, 6], 43: ["Amusement Parks", 5, 6], 44: ["Bridges", 5, 1],
+    45: ["Campgrounds", 5, 8],
+    46: ["Embassies", 5, 9], 47: ["Warehouses", 5, 5], 48: ["Theaters", 5, 6], 49: ["Golf Courses", 5, 6]
 }
 
 # Store the results

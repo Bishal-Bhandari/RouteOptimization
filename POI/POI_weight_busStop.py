@@ -12,10 +12,15 @@ def get_osm_pois(lat, lon, radius, poi_type):
     overpass_query = f"""
     [out:json];
     (
-      node["{poi_type}"](around:{radius},{lat},{lon})["amenity"!="bench"]["amenity"!="post_box"]["amenity"!="waste_basket"]["amenity"!="waste_bin"]["amenity"!="recycling"]["amenity"!="grit_bin"]["amenity"!="parking_space"];
-
-      way["{poi_type}"](around:{radius},{lat},{lon})["amenity"!="bench"]["amenity"!="post_box"]["amenity"!="waste_basket"]["amenity"!="waste_bin"]["amenity"!="recycling"]["amenity"!="grit_bin"]["amenity"!="parking_space"];
-      relation["{poi_type}"](around:{radius},{lat},{lon})["amenity"!="bench"]["amenity"!="post_box"]["amenity"!="waste_basket"]["amenity"!="waste_bin"]["amenity"!="recycling"]["amenity"!="grit_bin"]["amenity"!="parking_space"];
+      node["{poi_type}"](around:{radius},{lat},{lon})["amenity"!="bench"]["amenity"!="post_box"]
+      ["amenity"!="waste_basket"]["amenity"!="waste_bin"]["amenity"!="recycling"]["amenity"!="grit_bin"]
+      ["amenity"!="parking_space"];
+      way["{poi_type}"](around:{radius},{lat},{lon})["amenity"!="bench"]["amenity"!="post_box"]
+      ["amenity"!="waste_basket"]["amenity"!="waste_bin"]["amenity"!="recycling"]["amenity"!="grit_bin"]
+      ["amenity"!="parking_space"];
+      relation["{poi_type}"](around:{radius},{lat},{lon})["amenity"!="bench"]["amenity"!="post_box"]
+      ["amenity"!="waste_basket"]["amenity"!="waste_bin"]["amenity"!="recycling"]["amenity"!="grit_bin"]
+      ["amenity"!="parking_space"];
     );
     out body;
     >;
@@ -61,7 +66,7 @@ def save_and_plot_pois(lat, lon, pois):
             folium.Marker(
                 location=[poi["lat"], poi["lon"]],
                 popup=f"{poi['name']} ({poi['type']})",
-                tooltip=poi["name"]
+                tooltip=poi["type"]
             ).add_to(m)
     map_file = "../templates/osm_pois_rank_map.html"
     m.save(map_file)

@@ -68,7 +68,7 @@ def save_places_to_json(places, filename="../refineData/places_of_interest.json"
         json.dump(places_data, file, ensure_ascii=False, indent=4)
 
 
-def plot_on_osm_map(api_key, location, radius=15000):
+def plot_on_osm_map(api_key, location, radius=10000):
     # Parse location
     lat, lon = map(float, location.split(','))
 

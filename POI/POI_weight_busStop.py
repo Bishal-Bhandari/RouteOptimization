@@ -49,7 +49,7 @@ def save_and_plot_pois(lat, lon, pois):
     pois_df = pd.DataFrame(pois)
 
     # Save to ODS file
-    output_path = "../refineData/osm_pois_rank_data.ods"
+    output_path = "../refineData/osm_poi_rank_data.ods"
     pois_df.to_excel(output_path, engine="odf", index=False)
     print(f"POIs saved to {output_path}")
 
@@ -71,9 +71,8 @@ def save_and_plot_pois(lat, lon, pois):
 
 # Main
 def main():
-    # Location (latitude, longitude) and radius in meters
     location = (49.89517023418082, 10.885055540762723)  # Bamberg
-    radius = 1000  # Radius in meters
+    radius = 10000  # Radius in meters
     poi_type = "amenity"  # Search for amenities; customize as needed
 
     # Query OSM

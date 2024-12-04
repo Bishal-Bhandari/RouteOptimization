@@ -117,7 +117,7 @@ def save_and_plot_pois(lat, lon, pois):
             folium.Marker(
                 location=[poi["lat"], poi["lon"]],
                 popup=f"{poi['name']} ({poi['type']}) - Rank: {poi['popularity_rank']}, Similarity: {poi['similarity_rank']}",
-                tooltip=poi["name"]
+                tooltip=poi["name"] if poi["name"] else poi["type"]
             ).add_to(m)
     map_file = "../templates/osm_pois_rank_map.html"
     m.save(map_file)

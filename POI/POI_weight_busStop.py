@@ -34,37 +34,17 @@ def get_osm_pois(lat, lon, radius, poi_type):
         return None
 
 
-def classify_place(tags):
-    categories = {
-        "Education": ["school", "university", "college"],
-        "Transport": ["bus_stop", "train_station", "airport"],
-        "Healthcare": ["hospital", "clinic", "pharmacy"],
-        "Leisure": ["park", "cinema", "stadium"],
-        "Shopping": ["mall", "supermarket", "shop"],
-        "Food & Drink": ["restaurant", "cafe", "bar"],
-        "Tourism": ["museum", "hotel", "attraction"],
-        "Residential": ["apartments", "residential"],
-    }
-
-    for category, keywords in categories.items():
-        for key, value in tags.items():
-            if value in keywords or key in keywords:
-                return category
-    return "Other"
-
-
-# Example usage:
-def parse_and_classify_osm_data(osm_data):
+# Parse and save POIs
+def parse_osm_data(osm_data):
     pois = []
     if "elements" in osm_data:
         for element in osm_data["elements"]:
             if "tags" in element:
-                category = classify_place(element["tags"])
                 pois.append({
                     "name": element["tags"].get("name", "Unknown"),
-                    "type": category,
-                    "lat": element.get("lat"),
-                    "lon": element.get("lon"),
+                    "type": element["tags"].get("amenity", "Unknown"),
+                    "lat": element["lat"] if "lat" in element else None,
+                    "lon": element["lon"] if "lon" in element else None,
                 })
     return pois
 
@@ -104,7 +84,7 @@ def main():
     # Query OSM
     osm_data = get_osm_pois(location[0], location[1], radius, poi_type)
     if osm_data:
-        pois = parse_and_classify_osm_data(osm_data)
+        pois = parse_osm_data(osm_data)
         save_and_plot_pois(location[0], location[1], pois)
 
 

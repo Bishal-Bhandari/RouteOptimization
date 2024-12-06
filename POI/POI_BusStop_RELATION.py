@@ -10,12 +10,12 @@ bus_stop_file = "../refineData/final_busStop_density.ods"  # Replace with your b
 poi_data = pd.read_excel(poi_file, engine='odf')
 bus_stop_data = pd.read_excel(bus_stop_file, engine='odf')
 
-# Clean data
+# Clean data: Remove rows where latitude or longitude are NaN
 poi_data = poi_data.dropna(subset=['lat', 'lon'])
 bus_stop_data = bus_stop_data.dropna(subset=['Latitude', 'Longitude'])
 
 
-# Calculate bus stops within a 200-meter radius of a given POI
+# Define a function to calculate bus stops within a 500-meter radius of a given POI
 def find_nearby_bus_stops(poi, bus_stops, radius=200):
     poi_location = (poi['lat'], poi['lon'])
     nearby_stops = []
@@ -29,7 +29,7 @@ def find_nearby_bus_stops(poi, bus_stops, radius=200):
     return nearby_stops
 
 
-# ist to store the results
+# Initialize a list to store the results
 results = []
 # Create a graph to plot POIs and bus stops
 G = nx.Graph()
@@ -45,16 +45,17 @@ for _, bus_stop in bus_stop_data.iterrows():
 # Add edges connecting POIs to nearby bus stops (with the same color line)
 for _, poi in poi_data.iterrows():
     nearby_stops = find_nearby_bus_stops(poi, bus_stop_data)
-    for stop_name in nearby_stops:
-        G.add_edge(poi['name'], stop_name)
+    if nearby_stops:
+        for stop_name in nearby_stops:
+            G.add_edge(poi['name'], stop_name)  # Add edge only if within 500 meters
 
-    # Save the results to generate the POI data file
-    results.append({
-        'POI Name': poi['name'],
-        'Bus Stop Names': ', '.join(str(stop) for stop in nearby_stops) if nearby_stops else None,
-        'Bus Stop Count': len(nearby_stops),
-        'Popularity Rank': poi['popularity_rank']
-    })
+        # Save the results to generate the POI data file
+        results.append({
+            'POI Name': poi['name'],
+            'Bus Stop Names': ', '.join(str(stop) for stop in nearby_stops) if nearby_stops else None,
+            'Bus Stop Count': len(nearby_stops),
+            'Popularity Rank': poi['popularity_rank']
+        })
 
 # Convert results into a DataFrame
 results_df = pd.DataFrame(results)
@@ -79,11 +80,11 @@ nx.draw_networkx_edges(G, positions, width=1, alpha=0.5, edge_color='gray')
 
 # Save the graph as an image
 graph_image_file = "POI_BusStop_Graph.png"  # Replace with your desired output file path
-plt.title('POIs and Bus Stops within 200 meters')
+plt.title('POIs and Bus Stops within 500 meters')
 plt.axis('off')
 plt.savefig(graph_image_file, format='PNG')
 
-# Graph
+# Show the graph
 plt.show()
 
 print(f"Graph saved to {graph_image_file}")

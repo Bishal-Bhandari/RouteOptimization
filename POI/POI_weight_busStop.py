@@ -40,9 +40,9 @@ def parse_osm_data(osm_data):
     tag_dict = {
         value[0]: {"popularity_rank": value[1], "similarity_rank": value[2]}
         for value in [
-            # Place types  ["POI", "Popularity Rank", "Similarity of POI Rank" ] Popularity Rank = 1 highest and 5
-            # lowest 1: Transportation/Infrastructure 2: Education/Learning 3: Health/Wellness 4: Religious/Spiritual
-            # 5: Commerce/Business 6: Entertainment/Leisure 7: Food/Beverages8: Environment/Recreation 9:
+            # Place types ["POI", "Popularity Rank", "Similarity of POI Rank" ] Popularity Rank = 1 highest and 3 lowest
+            # 1: Transportation/Infrastructure 2: Education/Learning 3: Health/Wellness 4: Religious/Spiritual
+            # 5: Commerce/Business 6: Entertainment/Leisure 7: Food/Beverages 8: Environment/Recreation 9:
             # Public/Government Facilities
             ["library", 3, 2], ["biergarten", 2, 7], ["parking", 1, 1], ["restaurant", 1, 7],
             ["fuel", 1, 1], ["fountain", 2, 8], ["place_of_worship", 1, 4], ["school", 1, 2],

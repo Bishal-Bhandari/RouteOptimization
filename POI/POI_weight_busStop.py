@@ -11,8 +11,12 @@ def get_osm_pois(lat, lon, radius, poi_type):
     overpass_url = "http://overpass-api.de/api/interpreter"
     overpass_query = f"""
     [out:json];
+    
     (
-        node["{poi_type}"](around:{radius},{lat},{lon})["amenity"!="bench"]["amenity"!="post_box"]
+      node["railway"="station"](around:{radius},{lat},{lon});
+      way["railway"="station"](around:{radius},{lat},{lon});
+      relation["railway"="station"](around:{radius},{lat},{lon});
+      node["{poi_type}"](around:{radius},{lat},{lon})["amenity"!="bench"]["amenity"!="post_box"]
       ["amenity"!="waste_basket"]["amenity"!="waste_bin"]["amenity"!="recycling"]["amenity"!="grit_bin"]
       ["amenity"!="parking_space"]["amenity"!="shelter"];
       way["{poi_type}"](around:{radius},{lat},{lon})["amenity"!="bench"]["amenity"!="post_box"]
@@ -44,7 +48,7 @@ def parse_osm_data(osm_data):
             # 1: Transportation/Infrastructure 2: Education/Learning 3: Health/Wellness 4: Religious/Spiritual
             # 5: Commerce/Business 6: Entertainment/Leisure 7: Food/Beverages 8: Environment/Recreation 9:
             # Public/Government Facilities
-            ["library", 8, 2], ["train_station", 10, 1], ["museum", 7, 2], ["biergarten", 9, 7], ["parking", 5, 1],
+            ["library", 8, 2], ["train_station", 10, 1], ["station", 10, 1], ["museum", 7, 2], ["biergarten", 9, 7], ["parking", 5, 1],
             ["restaurant", 9, 7], ["fuel", 4, 1], ["fountain", 4, 8], ["place_of_worship", 7, 4], ["school", 8, 2],
             ["bank", 6, 5], ["boat_rental", 6, 6], ["fast_food", 9, 7], ["taxi", 4, 1],
             ["post_office", 6, 9], ["pharmacy", 8, 3], ["doctors", 4, 3], ["vending_machine", 4, 5],
@@ -54,7 +58,7 @@ def parse_osm_data(osm_data):
             ["driving_school", 6, 2], ["ice_cream", 6, 7], ["bar", 6, 7], ["drinking_water", 3, 8],
             ["waste_disposal", 2, 8], ["parcel_locker", 3, 9], ["ferry_terminal", 4, 1],
             ["parking_entrance", 5, 1], ["music_school", 7, 2], ["nightclub", 6, 7],
-            ["car_sharing", 4, 1], ["university", 8, 2], ["stripclub", 3, 7],
+            ["car_sharing", 4, 1], ["university", 8, 2], ["stripclub", 3, 7], ["brothel", 3, 6],
             ["kindergarten", 5, 2], ["motorcycle_parking", 4, 1], ["swingerclub", 1, 7],
             ["kneipp_water_cure", 1, 3], ["clock", 2, 8], ["water_point", 2, 8],
             ["dentist", 4, 3], ["car_wash", 6, 1], ["car_rental", 3, 1], ["bbq", 8, 7],

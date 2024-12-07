@@ -79,7 +79,7 @@ nx.draw_networkx_labels(G, positions)
 nx.draw_networkx_edges(G, positions, width=1, alpha=0.5, edge_color='gray')
 
 # Save the graph as an image
-graph_image_file = "POI_BusStop_Graph.png"  # Replace with your desired output file path
+graph_image_file = "../templates/POI_BusStop_Graph.png"  # Replace with your desired output file path
 plt.title('POIs and Bus Stops within 500 meters')
 plt.axis('off')
 plt.savefig(graph_image_file, format='PNG')

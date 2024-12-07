@@ -40,29 +40,29 @@ def parse_osm_data(osm_data):
     tag_dict = {
         value[0]: {"popularity_rank": value[1], "similarity_rank": value[2]}
         for value in [
-            # Place types ["POI", "Popularity Rank", "Similarity of POI Rank" ] Popularity Rank = 1 highest and 3 lowest
+            # Place types ["POI", "Popularity Rank", "Similarity of POI Rank" ] Popularity Rank = 1 highest and 5 lowest
             # 1: Transportation/Infrastructure 2: Education/Learning 3: Health/Wellness 4: Religious/Spiritual
             # 5: Commerce/Business 6: Entertainment/Leisure 7: Food/Beverages 8: Environment/Recreation 9:
             # Public/Government Facilities
-            ["library", 3, 2], ["biergarten", 2, 7], ["parking", 1, 1], ["restaurant", 1, 7],
-            ["fuel", 1, 1], ["fountain", 2, 8], ["place_of_worship", 1, 4], ["school", 1, 2],
-            ["bank", 1, 5], ["boat_rental", 2, 6], ["fast_food", 1, 7], ["taxi", 1, 1],
-            ["post_office", 1, 9], ["pharmacy", 1, 3], ["doctors", 1, 3], ["vending_machine", 2, 5],
+            ["library", 3, 2], ["train_station", 1, 1], ["biergarten", 2, 7], ["parking", 1, 1], ["restaurant", 2, 7],
+            ["fuel", 1, 1], ["fountain", 2, 8], ["place_of_worship", 1, 4], ["school", 3, 2],
+            ["bank", 1, 5], ["boat_rental", 2, 6], ["fast_food", 2, 7], ["taxi", 1, 1],
+            ["post_office", 3, 9], ["pharmacy", 1, 3], ["doctors", 1, 3], ["vending_machine", 2, 5],
             ["pub", 1, 7], ["telephone", 2, 5], ["community_centre", 2, 9], ["cinema", 2, 6],
-            ["atm", 1, 5], ["cafe", 1, 7], ["bicycle_parking", 1, 1], ["theatre", 2, 6],
+            ["atm", 1, 5], ["cafe", 2, 7], ["bicycle_parking", 1, 1], ["theatre", 2, 6],
             ["toilets", 1, 3], ["hunting_stand", 3, 8], ["fire_station", 1, 3], ["bts", 3, 1],
             ["driving_school", 2, 2], ["ice_cream", 2, 7], ["bar", 1, 7], ["drinking_water", 2, 8],
             ["waste_disposal", 2, 8], ["parcel_locker", 2, 9], ["ferry_terminal", 2, 1],
             ["parking_entrance", 3, 1], ["music_school", 2, 2], ["nightclub", 2, 7],
-            ["car_sharing", 2, 1], ["university", 1, 2], ["stripclub", 3, 7],
+            ["car_sharing", 2, 1], ["university", 3, 2], ["stripclub", 3, 7],
             ["kindergarten", 1, 2], ["motorcycle_parking", 2, 1], ["swingerclub", 3, 7],
             ["kneipp_water_cure", 3, 3], ["brothel", 3, 7], ["clock", 3, 8], ["water_point", 2, 8],
             ["dentist", 1, 3], ["car_wash", 2, 1], ["car_rental", 2, 1], ["bbq", 3, 7],
             ["veterinary", 2, 3], ["studio", 2, 6], ["photo_booth", 3, 5],
             ["charging_station", 1, 1], ["childcare", 2, 2], ["social_facility", 2, 9],
             ["sanitary_dump_station", 3, 8], ["courthouse", 2, 9], ["bicycle_rental", 2, 1],
-            ["public_bookcase", 3, 2], ["dancing_studio", 3, 2], ["marketplace", 1, 5],
-            ["reception_desk", 3, 9], ["binoculars", 3, 8], ["hospital", 1, 3],
+            ["public_bookcase", 3, 2], ["shopping_mall", 2, 5], ["dancing_studio", 3, 2], ["marketplace", 1, 5],
+            ["reception_desk", 3, 9], ["binoculars", 3, 8], ["hospital", 3, 3],
             ["trolley_bay", 3, 1], ["luggage_locker", 3, 1], ["academy", 2, 2],
             ["financial_advice", 2, 5], ["dojo", 3, 2], ["gambling", 3, 6], ["fraternity", 3, 9],
             ["internet_cafe", 2, 7], ["letter_box", 2, 9], ["locker", 3, 1], ["prep_school", 2, 2],

@@ -13,9 +13,6 @@ def get_osm_pois(lat, lon, radius, poi_type):
     [out:json];
     
     (
-      node["railway"="station"](around:{radius},{lat},{lon});
-      way["railway"="station"](around:{radius},{lat},{lon});
-      relation["railway"="station"](around:{radius},{lat},{lon});
       node["{poi_type}"](around:{radius},{lat},{lon})["amenity"!="bench"]["amenity"!="post_box"]
       ["amenity"!="waste_basket"]["amenity"!="waste_bin"]["amenity"!="recycling"]["amenity"!="grit_bin"]
       ["amenity"!="parking_space"]["amenity"!="shelter"];

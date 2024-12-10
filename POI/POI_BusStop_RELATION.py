@@ -10,12 +10,12 @@ bus_stop_file = "../refineData/final_busStop_density.ods"  # Replace with your b
 poi_data = pd.read_excel(poi_file, engine='odf')
 bus_stop_data = pd.read_excel(bus_stop_file, engine='odf')
 
-# Clean data: Remove rows where latitude or longitude are NaN
+# Clean data
 poi_data = poi_data.dropna(subset=['lat', 'lon'])
 bus_stop_data = bus_stop_data.dropna(subset=['Latitude', 'Longitude'])
 
 
-# Define a function to calculate bus stops within a 500-meter radius of a given POI
+# Calculate bus stops within a 100-meter radius of a given POI
 def find_nearby_bus_stops(poi, bus_stops, radius=200):
     poi_location = (poi['lat'], poi['lon'])
     nearby_stops = []
@@ -24,35 +24,36 @@ def find_nearby_bus_stops(poi, bus_stops, radius=200):
         bus_stop_location = (bus_stop['Latitude'], bus_stop['Longitude'])
         distance = geodesic(poi_location, bus_stop_location).meters
         if distance <= radius:
-            nearby_stops.append(bus_stop['Stop name'])
+            nearby_stops.append((bus_stop['Latitude'], bus_stop['Longitude']))  # Use lat/lon tuple
 
     return nearby_stops
 
 
-# Initialize a list to store the results
+# List to store the results
 results = []
-# Create a graph to plot POIs and bus stops
+# Plot POIs and bus stops
 G = nx.Graph()
 
-# Add POIs to the graph as nodes (red dots)
+# Add POIs (red dots)
 for _, poi in poi_data.iterrows():
-    G.add_node(poi['name'], pos=(poi['lon'], poi['lat']), color='red', type='POI')
+    G.add_node((poi['lat'], poi['lon']), pos=(poi['lon'], poi['lat']), color='red', type='POI')
 
-# Add bus stops to the graph as nodes (blue dots)
+# Add bus stops (blue dots)
 for _, bus_stop in bus_stop_data.iterrows():
-    G.add_node(bus_stop['Stop name'], pos=(bus_stop['Longitude'], bus_stop['Latitude']), color='blue', type='Bus Stop')
+    G.add_node((bus_stop['Latitude'], bus_stop['Longitude']), pos=(bus_stop['Longitude'], bus_stop['Latitude']),
+               color='blue', type='Bus Stop')
 
-# Add edges connecting POIs to nearby bus stops (with the same color line)
+# Edges connecting POIs to nearby bus stops
 for _, poi in poi_data.iterrows():
     nearby_stops = find_nearby_bus_stops(poi, bus_stop_data)
     if nearby_stops:
-        for stop_name in nearby_stops:
-            G.add_edge(poi['name'], stop_name)  # Add edge only if within 500 meters
+        for stop_location in nearby_stops:
+            G.add_edge((poi['lat'], poi['lon']), stop_location)
 
         # Save the results to generate the POI data file
         results.append({
             'POI Name': poi['name'],
-            'Bus Stop Names': ', '.join(str(stop) for stop in nearby_stops) if nearby_stops else None,
+            'Bus Stop Locations': ', '.join(str(stop) for stop in nearby_stops) if nearby_stops else None,
             'Bus Stop Count': len(nearby_stops),
             'Popularity Rank': poi['popularity_rank']
         })
@@ -80,4 +81,3 @@ nx.draw_networkx_edges(G, positions, width=1, alpha=0.5, edge_color='gray')
 
 # Show the graph
 plt.show()
-print(f"Results saved to {output_file}")

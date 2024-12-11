@@ -14,19 +14,24 @@ api_key = api_keys['Brussels']['API_key']
 
 # Data from the API
 url = "https://api.mobilitytwin.brussels/stib/vehicle-schedule"
-response = requests.get(url, headers={
-    'Authorization': 'Bearer [api_key]'
-})
-data = response.json()
+headers = {'Authorization': 'Bearer [api_key]'}
 
-# To GeoDataFrame
-gdf = gpd.GeoDataFrame.from_features(data["features"])
+response = requests.get(url, headers=headers)
 
-# Saving to ODS
-df = pd.DataFrame(gdf)
+if response.status_code == 200:
+    try:
+        data = response.json()
+        gdf = gpd.GeoDataFrame.from_features(data["features"])
 
-# ODS file
-output_file = "vehicle_schedule_data.ods"
-df.to_excel(output_file, engine="odf", index=False)
+        # Convert GeoDataFrame to DataFrame
+        df = pd.DataFrame(gdf)
 
-print(f"Data successfully saved to {output_file}")
+        # Save to ODS file
+        output_file = "vehicle_schedule_data.ods"
+        df.to_excel(output_file, engine="odf", index=False)
+
+        print(f"Data successfully saved to {output_file}")
+    except ValueError as e:
+        print(f"Error decoding JSON: {e}")
+else:
+    print(f"Failed to fetch data: {response.status_code} - {response.text}")

@@ -22,7 +22,7 @@ data = response.json()
 # To GeoDataFrame
 gdf = gpd.GeoDataFrame.from_features(data["features"])
 
-# Convert GeoDataFrame to DataFrame for saving to ODS
+# Saving to ODS
 df = pd.DataFrame(gdf)
 
 # Save to ODS file

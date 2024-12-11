@@ -19,7 +19,7 @@ response = requests.get(url, headers={
 })
 data = response.json()
 
-# Convert to GeoDataFrame
+# To GeoDataFrame
 gdf = gpd.GeoDataFrame.from_features(data["features"])
 
 # Convert GeoDataFrame to DataFrame for saving to ODS

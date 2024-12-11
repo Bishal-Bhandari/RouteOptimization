@@ -25,7 +25,7 @@ gdf = gpd.GeoDataFrame.from_features(data["features"])
 # Saving to ODS
 df = pd.DataFrame(gdf)
 
-# Save to ODS file
+# ODS file
 output_file = "vehicle_schedule_data.ods"
 df.to_excel(output_file, engine="odf", index=False)
 

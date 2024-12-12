@@ -33,7 +33,7 @@ if response.status_code == 200:
         df = gdf.drop(columns="geometry")
 
         # ODS file name
-        output_file = "vehicle_position_data_with_latlong.ods"
+        output_file = "../refineData/Brussel MT/vehicle_position_data_with_latlong.ods"
 
         # Save file
         df.to_excel(output_file, engine="odf", index=False)

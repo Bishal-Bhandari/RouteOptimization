@@ -10,27 +10,32 @@ with open('../api_keys.json') as json_file:
 
 # Brussel MT API key
 api_key = api_keys['Brussels']['API_key']
+
 # Define the API endpoint and your API key
 url = "https://api.mobilitytwin.brussels/stib/vehicle-position"
 
-# Fetch data
+# Fetch data from the API
 response = requests.get(url, headers={'Authorization': f'Bearer {api_key}'})
 
 if response.status_code == 200:
     try:
-        # JSON parse
+        # Parse the JSON response
         data = response.json()
 
-        # To GeoDataFrame
+        # Convert the features to a GeoDataFrame
         gdf = gpd.GeoDataFrame.from_features(data["features"])
 
-        # GeoDataFrame to pandas DataFrame
-        df = pd.DataFrame(gdf)
+        # Extract latitude and longitude from the geometry column
+        gdf["latitude"] = gdf.geometry.y
+        gdf["longitude"] = gdf.geometry.x
 
-        # ODS file
-        output_file = "../refineData/Brussel MT/vehicle_position_data.ods"
+        # Convert the GeoDataFrame to a pandas DataFrame
+        df = gdf.drop(columns="geometry")
 
-        # Save file
+        # Define the output ODS file name
+        output_file = "vehicle_position_data_with_latlong.ods"
+
+        # Save to an ODS file
         df.to_excel(output_file, engine="odf", index=False)
 
         print(f"Data successfully saved to {output_file}")
@@ -39,5 +44,6 @@ if response.status_code == 200:
         print(f"Error processing the JSON data: {e}")
 
 else:
-    # Handle HTTP error
+    # Handle HTTP error responses
     print(f"Failed to fetch data: {response.status_code} - {response.text}")
+

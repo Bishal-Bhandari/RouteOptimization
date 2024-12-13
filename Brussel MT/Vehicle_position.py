@@ -1,6 +1,4 @@
 import json
-
-import pandas as pd
 import requests
 import geopandas as gpd
 
@@ -37,8 +35,6 @@ if response.status_code == 200:
 
         # Save file
         df.to_excel(output_file, engine="odf", index=False)
-
-        print(f"Data successfully saved to {output_file}")
 
     except ValueError as e:
         print(f"Error processing the JSON data: {e}")

@@ -30,8 +30,8 @@ if response.status_code == 200:
         else:
             raise ValueError("Unexpected data format. Adjust the code as needed.")
 
-        # Define the output ODS file name
-        output_file = "speed_data.ods"
+        # Define the output ODS file
+        output_file = "../refineData/Brussel MT/speed_data.ods"
 
         # Save to an ODS file
         df.to_excel(output_file, engine="odf", index=False)

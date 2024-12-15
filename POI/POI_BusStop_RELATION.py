@@ -81,13 +81,14 @@ results_df.to_excel(output_file, index=False, engine='odf')
 # Extract positions for plotting
 positions = nx.get_node_attributes(G, 'pos')
 colors = [G.nodes[node]['color'] for node in G.nodes]
+labels = nx.get_node_attributes(G, 'label')  # Extract labels for nodes
 
 # Draw the graph
 plt.figure(figsize=(12, 12))
 
 # Draw POIs as red dots and bus stops as blue dots
 nx.draw_networkx_nodes(G, positions, node_size=100, node_color=colors)
-nx.draw_networkx_labels(G, positions)
+nx.draw_networkx_labels(G, positions, labels=labels, font_size=8, font_color='black')  # Use labels for nodes
 
 # Draw edges with the same color
 nx.draw_networkx_edges(G, positions, width=1, alpha=0.5, edge_color='gray')

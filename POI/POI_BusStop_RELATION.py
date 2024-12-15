@@ -34,27 +34,14 @@ results = []
 # Plot POIs and bus stops
 G = nx.Graph()
 
-# Add POIs (red dots) with names
+# Add POIs (red dots)
 for _, poi in poi_data.iterrows():
-    poi_label = poi['name']
-    G.add_node(
-        (poi['lat'], poi['lon']),
-        pos=(poi['lon'], poi['lat']),
-        color='red',
-        label=poi_label,
-        type='POI'
-    )
+    G.add_node((poi['lat'], poi['lon']), pos=(poi['lon'], poi['lat']), color='red', type='POI')
 
-# Add bus stops (blue dots) with identifiers
-for idx, bus_stop in bus_stop_data.iterrows():
-    stop_label = f"BusStop {'Stop name'}"
-    G.add_node(
-        (bus_stop['Latitude'], bus_stop['Longitude']),
-        pos=(bus_stop['Longitude'], bus_stop['Latitude']),
-        color='blue',
-        label=stop_label,
-        type='Bus Stop'
-    )
+# Add bus stops (blue dots)
+for _, bus_stop in bus_stop_data.iterrows():
+    G.add_node((bus_stop['Latitude'], bus_stop['Longitude']), pos=(bus_stop['Longitude'], bus_stop['Latitude']),
+               color='blue', type='Bus Stop')
 
 # Edges connecting POIs to nearby bus stops
 for _, poi in poi_data.iterrows():
@@ -81,14 +68,13 @@ results_df.to_excel(output_file, index=False, engine='odf')
 # Extract positions for plotting
 positions = nx.get_node_attributes(G, 'pos')
 colors = [G.nodes[node]['color'] for node in G.nodes]
-labels = nx.get_node_attributes(G, 'label')  # Extract labels for nodes
 
 # Draw the graph
 plt.figure(figsize=(12, 12))
 
 # Draw POIs as red dots and bus stops as blue dots
 nx.draw_networkx_nodes(G, positions, node_size=100, node_color=colors)
-nx.draw_networkx_labels(G, positions, labels=labels, font_size=8, font_color='black')  # Use labels for nodes
+nx.draw_networkx_labels(G, positions)
 
 # Draw edges with the same color
 nx.draw_networkx_edges(G, positions, width=1, alpha=0.5, edge_color='gray')

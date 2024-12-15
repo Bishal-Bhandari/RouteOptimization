@@ -34,14 +34,27 @@ results = []
 # Plot POIs and bus stops
 G = nx.Graph()
 
-# Add POIs (red dots)
+# Add POIs (red dots) with names
 for _, poi in poi_data.iterrows():
-    G.add_node((poi['lat'], poi['lon']), pos=(poi['lon'], poi['lat']), color='red', type='POI')
+    poi_label = poi['name']
+    G.add_node(
+        (poi['lat'], poi['lon']),
+        pos=(poi['lon'], poi['lat']),
+        color='red',
+        label=poi_label,
+        type='POI'
+    )
 
-# Add bus stops (blue dots)
-for _, bus_stop in bus_stop_data.iterrows():
-    G.add_node((bus_stop['Latitude'], bus_stop['Longitude']), pos=(bus_stop['Longitude'], bus_stop['Latitude']),
-               color='blue', type='Bus Stop')
+# Add bus stops (blue dots) with identifiers
+for idx, bus_stop in bus_stop_data.iterrows():
+    stop_label = f"BusStop {'Stop name'}"
+    G.add_node(
+        (bus_stop['Latitude'], bus_stop['Longitude']),
+        pos=(bus_stop['Longitude'], bus_stop['Latitude']),
+        color='blue',
+        label=stop_label,
+        type='Bus Stop'
+    )
 
 # Edges connecting POIs to nearby bus stops
 for _, poi in poi_data.iterrows():

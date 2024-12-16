@@ -1,3 +1,6 @@
+import os
+import webbrowser
+
 import pandas as pd
 import folium
 from geopy.distance import geodesic
@@ -87,5 +90,8 @@ results_df.to_excel(output_file, index=False, engine='odf')
 # Save the map to an HTML file
 map_file = "../templates/POI_BusStops_Map.html"  # Replace with your desired map file path
 map_folium.save(map_file)
+# Open the map
+file_path = os.path.abspath(map_file)
+webbrowser.open(f"file://{file_path}")
 
 print(f"Data saved to {output_file} and map saved to {map_file}.")

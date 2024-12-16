@@ -1,6 +1,5 @@
 import pandas as pd
-import networkx as nx
-import matplotlib.pyplot as plt
+import folium
 from geopy.distance import geodesic
 
 # Load POI and bus stop data
@@ -15,7 +14,7 @@ poi_data = poi_data.dropna(subset=['lat', 'lon'])
 bus_stop_data = bus_stop_data.dropna(subset=['Latitude', 'Longitude'])
 
 
-# Calculate bus stops within a 100-meter radius of a given POI
+# Function to find nearby bus stops within a radius
 def find_nearby_bus_stops(poi, bus_stops, radius=200):
     poi_location = (poi['lat'], poi['lon'])
     nearby_stops = []
@@ -24,60 +23,69 @@ def find_nearby_bus_stops(poi, bus_stops, radius=200):
         bus_stop_location = (bus_stop['Latitude'], bus_stop['Longitude'])
         distance = geodesic(poi_location, bus_stop_location).meters
         if distance <= radius:
-            nearby_stops.append((bus_stop['Latitude'], bus_stop['Longitude']))  # Use lat/lon tuple
+            stop_name = bus_stop.get('name', f"Bus Stop {_}")
+            nearby_stops.append((bus_stop['Latitude'], bus_stop['Longitude'], stop_name))
 
     return nearby_stops
 
 
-# List to store the results
+# Create a Folium map centered on the average coordinates of the POI data
+center_lat = poi_data['lat'].mean()
+center_lon = poi_data['lon'].mean()
+map_folium = folium.Map(location=[center_lat, center_lon], zoom_start=14)
+
+# List to store results for the ODS file
 results = []
-# Plot POIs and bus stops
-G = nx.Graph()
 
-# Add POIs (red dots)
+# Add POI markers and calculate nearby stops
 for _, poi in poi_data.iterrows():
-    G.add_node((poi['lat'], poi['lon']), pos=(poi['lon'], poi['lat']), color='red', type='POI')
+    poi_name = poi.get('name', "Unnamed POI")
+    poi_location = (poi['lat'], poi['lon'])
 
-# Add bus stops (blue dots)
-for _, bus_stop in bus_stop_data.iterrows():
-    G.add_node((bus_stop['Latitude'], bus_stop['Longitude']), pos=(bus_stop['Longitude'], bus_stop['Latitude']),
-               color='blue', type='Bus Stop')
-
-# Edges connecting POIs to nearby bus stops
-for _, poi in poi_data.iterrows():
+    # Find nearby bus stops
     nearby_stops = find_nearby_bus_stops(poi, bus_stop_data)
-    if nearby_stops:
-        for stop_location in nearby_stops:
-            G.add_edge((poi['lat'], poi['lon']), stop_location)
 
-        # Save the results to generate the POI data file
-        results.append({
-            'POI Name': poi['name'],
-            'Bus Stop Locations': ', '.join(str(stop) for stop in nearby_stops) if nearby_stops else None,
-            'Bus Stop Count': len(nearby_stops),
-            'Popularity Rank': poi['popularity_rank']
-        })
+    # Add POI marker to the map
+    folium.Marker(
+        location=[poi['lat'], poi['lon']],
+        tooltip=f"POI: {poi_name}",
+        icon=folium.Icon(color='red', icon='info-sign')
+    ).add_to(map_folium)
+
+    # Add edges and bus stop markers to the map
+    for stop_lat, stop_lon, stop_name in nearby_stops:
+        # Add line connecting POI to bus stop
+        folium.PolyLine(
+            locations=[poi_location, (stop_lat, stop_lon)],
+            color='gray',
+            weight=1,
+            opacity=0.5
+        ).add_to(map_folium)
+
+        # Add bus stop marker
+        folium.Marker(
+            location=[stop_lat, stop_lon],
+            tooltip=f"Bus Stop: {stop_name}",
+            icon=folium.Icon(color='blue', icon='bus')
+        ).add_to(map_folium)
+
+    # Save results to a list
+    results.append({
+        'POI Name': poi_name,
+        'Bus Stop Locations': ', '.join(f"{stop_name} ({stop_lat}, {stop_lon})" for stop_lat, stop_lon, stop_name in nearby_stops),
+        'Bus Stop Count': len(nearby_stops),
+        'Popularity Rank': poi.get('popularity_rank', None)
+    })
 
 # Convert results into a DataFrame
 results_df = pd.DataFrame(results)
 
 # Save the results to an ODS file
-output_file = "../refineData/POI_BusStops_Proximity_with_Rank.ods"  # Replace with your desired output file path
+output_file = "../refineData/POI_BusStops_Proximity_with_Rank1.ods"  # Replace with your desired output file path
 results_df.to_excel(output_file, index=False, engine='odf')
 
-# Extract positions for plotting
-positions = nx.get_node_attributes(G, 'pos')
-colors = [G.nodes[node]['color'] for node in G.nodes]
+# Save the map to an HTML file
+map_file = "../templates/POI_BusStops_Map.html"  # Replace with your desired map file path
+map_folium.save(map_file)
 
-# Draw the graph
-plt.figure(figsize=(12, 12))
-
-# Draw POIs as red dots and bus stops as blue dots
-nx.draw_networkx_nodes(G, positions, node_size=100, node_color=colors)
-nx.draw_networkx_labels(G, positions)
-
-# Draw edges with the same color
-nx.draw_networkx_edges(G, positions, width=1, alpha=0.5, edge_color='gray')
-
-# Show the graph
-plt.show()
+print(f"Data saved to {output_file} and map saved to {map_file}.")

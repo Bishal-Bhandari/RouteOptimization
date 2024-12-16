@@ -64,7 +64,7 @@ for _, poi in poi_data.iterrows():
         # Add line connecting POI to bus stop
         folium.PolyLine(
             locations=[poi_location, (stop_lat, stop_lon)],
-            color='gray',
+            color='blue',
             weight=1,
             opacity=0.5
         ).add_to(map_folium)
@@ -73,18 +73,18 @@ for _, poi in poi_data.iterrows():
         folium.CircleMarker(
             location=[stop_lat, stop_lon],
             radius=4,  # Dot size
-            color='blue',  # Border color
+            color='green',  # Border color
             fill=True,
             fill_color='blue',  # Fill color
             fill_opacity=0.8,
             tooltip=f"Bus Stop: {stop_name}"  # Show name on hover
         ).add_to(map_folium)
 
-
     # Save results to a list
     results.append({
         'POI Name': poi_name,
-        'Bus Stop Locations': ', '.join(f"{stop_name} ({stop_lat}, {stop_lon})" for stop_lat, stop_lon, stop_name in nearby_stops),
+        'Bus Stop Locations': ', '.join(
+            f"{stop_name} ({stop_lat}, {stop_lon})" for stop_lat, stop_lon, stop_name in nearby_stops),
         'Bus Stop Count': len(nearby_stops),
         'Popularity Rank': poi.get('popularity_rank', None)
     })

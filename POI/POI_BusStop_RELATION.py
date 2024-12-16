@@ -48,14 +48,18 @@ for _, poi in poi_data.iterrows():
     # Find nearby bus stops
     nearby_stops = find_nearby_bus_stops(poi, bus_stop_data)
 
-    # Add POI marker to the map
-    folium.Marker(
+    # Add POI dot to the map
+    folium.CircleMarker(
         location=[poi['lat'], poi['lon']],
-        tooltip=f"POI: {poi_name}",
-        icon=folium.Icon(color='red', icon='info-sign')
+        radius=6,  # Dot size
+        color='red',  # Border color
+        fill=True,
+        fill_color='red',  # Fill color
+        fill_opacity=0.8,
+        tooltip=f"POI: {poi_name}"  # Show name on hover
     ).add_to(map_folium)
 
-    # Add edges and bus stop markers to the map
+    # Add edges and bus stop dots to the map
     for stop_lat, stop_lon, stop_name in nearby_stops:
         # Add line connecting POI to bus stop
         folium.PolyLine(
@@ -65,12 +69,17 @@ for _, poi in poi_data.iterrows():
             opacity=0.5
         ).add_to(map_folium)
 
-        # Add bus stop marker
-        folium.Marker(
+        # Add bus stop dot
+        folium.CircleMarker(
             location=[stop_lat, stop_lon],
-            tooltip=f"Bus Stop: {stop_name}",
-            icon=folium.Icon(color='blue', icon='bus')
+            radius=4,  # Dot size
+            color='blue',  # Border color
+            fill=True,
+            fill_color='blue',  # Fill color
+            fill_opacity=0.8,
+            tooltip=f"Bus Stop: {stop_name}"  # Show name on hover
         ).add_to(map_folium)
+
 
     # Save results to a list
     results.append({

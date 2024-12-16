@@ -26,9 +26,8 @@ def find_nearby_bus_stops(poi, bus_stops, radius=200):
         bus_stop_location = (bus_stop['Latitude'], bus_stop['Longitude'])
         distance = geodesic(poi_location, bus_stop_location).meters
         if distance <= radius:
-            stop_name = bus_stop.get('name', f"Bus Stop {_}")
+            stop_name = bus_stop.get('Stop name', f"Bus Stop {_}")
             nearby_stops.append((bus_stop['Latitude'], bus_stop['Longitude'], stop_name))
-
     return nearby_stops
 
 
@@ -47,7 +46,6 @@ for _, poi in poi_data.iterrows():
 
     # Find nearby bus stops
     nearby_stops = find_nearby_bus_stops(poi, bus_stop_data)
-
     # Add POI dot to the map
     folium.CircleMarker(
         location=[poi['lat'], poi['lon']],

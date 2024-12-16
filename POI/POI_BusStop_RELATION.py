@@ -17,7 +17,7 @@ poi_data = poi_data.dropna(subset=['lat', 'lon'])
 bus_stop_data = bus_stop_data.dropna(subset=['Latitude', 'Longitude'])
 
 
-# Function to find nearby bus stops within a radius
+# Find nearby bus stops within a radius
 def find_nearby_bus_stops(poi, bus_stops, radius=200):
     poi_location = (poi['lat'], poi['lon'])
     nearby_stops = []
@@ -32,15 +32,15 @@ def find_nearby_bus_stops(poi, bus_stops, radius=200):
     return nearby_stops
 
 
-# Create a Folium map centered on the average coordinates of the POI data
+# Folium map
 center_lat = poi_data['lat'].mean()
 center_lon = poi_data['lon'].mean()
 map_folium = folium.Map(location=[center_lat, center_lon], zoom_start=14)
 
-# List to store results for the ODS file
+# For the ODS file
 results = []
 
-# Add POI markers and calculate nearby stops
+# Add POI marker
 for _, poi in poi_data.iterrows():
     poi_name = poi.get('name', "Unnamed POI")
     poi_location = (poi['lat'], poi['lon'])
@@ -59,9 +59,9 @@ for _, poi in poi_data.iterrows():
         tooltip=f"POI: {poi_name}"  # Show name on hover
     ).add_to(map_folium)
 
-    # Add edges and bus stop dots to the map
+    # Edges and bus stop
     for stop_lat, stop_lon, stop_name in nearby_stops:
-        # Add line connecting POI to bus stop
+        # Line connecting POI to bus stop
         folium.PolyLine(
             locations=[poi_location, (stop_lat, stop_lon)],
             color='blue',
@@ -89,7 +89,7 @@ for _, poi in poi_data.iterrows():
         'Popularity Rank': poi.get('popularity_rank', None)
     })
 
-# Convert results into a DataFrame
+# Into a DataFrame
 results_df = pd.DataFrame(results)
 
 # Save the results to an ODS file

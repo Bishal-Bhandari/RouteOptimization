@@ -49,7 +49,7 @@ for _, poi in poi_data.iterrows():
     # Add POI dot to the map
     folium.CircleMarker(
         location=[poi['lat'], poi['lon']],
-        radius=6,  # Dot size
+        radius=3,  # Dot size
         color='red',  # Border color
         fill=True,
         fill_color='red',  # Fill color
@@ -63,14 +63,14 @@ for _, poi in poi_data.iterrows():
         folium.PolyLine(
             locations=[poi_location, (stop_lat, stop_lon)],
             color='blue',
-            weight=1,
+            weight=3,
             opacity=0.5
         ).add_to(map_folium)
 
         # Add bus stop dot
         folium.CircleMarker(
             location=[stop_lat, stop_lon],
-            radius=4,  # Dot size
+            radius=3,  # Dot size
             color='green',  # Border color
             fill=True,
             fill_color='blue',  # Fill color

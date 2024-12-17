@@ -10,19 +10,19 @@ python_files = [
     'Vehicle_Stops.py'
 ]
 
-# Interval in seconds (1 hour)
-interval = 3600  # 60 minutes * 60 seconds
+# Interval
+interval = 3600
 
 while True:
     try:
-        # Run each Python file in the list
+        # Run each file
         for python_file in python_files:
             print(f"Running {python_file}...")
             subprocess.run(['python', python_file], check=True)
 
-        # Wait for 1 hour before running the scripts again
+        # Wait for 60 min
         print(f"All scripts executed. Waiting for {interval/60} minutes...")
-        time.sleep(interval)  # Wait for 1 hour (3600 seconds)
+        time.sleep(interval)
 
     except subprocess.CalledProcessError as e:
         print(f"An error occurred while running the script: {e}")

@@ -71,7 +71,7 @@ for _, bus_stop in bus_stop_data.iterrows():
     ).add_to(map_folium)
 
 # Save the map to an HTML file
-map_file = "../templates/POI_similarity_hub_Map.html"
+map_file = "../templates/POI_popularity_hub_Map.html"
 map_folium.save(map_file)
 # Open the map
 file_path = os.path.abspath(map_file)

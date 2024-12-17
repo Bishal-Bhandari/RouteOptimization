@@ -27,19 +27,28 @@ if response.status_code == 200:
     data = response.json()
     gdf = gpd.GeoDataFrame.from_features(data["features"])
 
-    # Assign a CRS if it is missing (default to WGS84)
+    # Assign a CRS if missing (default to WGS84)
     if gdf.crs is None:
-        gdf.set_crs(epsg=4326, inplace=True)
+        gdf.set_crs(epsg=4326, inplace=True)  # WGS84 Lat/Lon CRS
 
-        # Save to ODS file
+    # Reproject to a projected CRS (Web Mercator or Belgium Lambert 72)
+    gdf_projected = gdf.to_crs(epsg=3857)  # Web Mercator projection
+
+    # Calculate centroids in the projected CRS
+    centroids = gdf_projected.centroid
+
+    # Reproject centroids back to geographic CRS for plotting
+    centroids_geo = centroids.to_crs(epsg=4326)
+
+    # Calculate map center
+    center_lat = centroids_geo.y.mean()
+    center_lon = centroids_geo.x.mean()
+
+    # Save to ODS file
     output_file = "../refineData/Brussel MT/mobility_data.ods"
     df = pd.DataFrame(gdf.drop(columns='geometry'))  # Drop geometry column for tabular data
     df.to_excel(output_file, engine='odf', index=False)
     print(f"Data saved to {output_file}")
-
-    # Calculate map center
-    center_lat = gdf.geometry.centroid.y.mean()
-    center_lon = gdf.geometry.centroid.x.mean()
 
     # Initialize the Folium map
     m = folium.Map(location=[center_lat, center_lon], zoom_start=12)

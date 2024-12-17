@@ -1,6 +1,5 @@
 import requests
 import json
-
 import pandas as pd
 import pyexcel as p
 
@@ -20,9 +19,28 @@ try:
 
     # Parse JSON response
     data = response.json()
-    # Save GeoDataFrame to ODS format
+
+    # Output ODS file
     ods_file = "../refineData/Brussel MT/vehicle_distance.ods"
-    p.save_as(records=data, dest_file_name=ods_file)
+
+    # Load existing ODS file
+    try:
+        existing_data = p.get_records(file_name=ods_file)
+        existing_df = pd.DataFrame(existing_data)
+        print("Existing data loaded successfully.")
+    except FileNotFoundError:
+        print("Existing file not found. Creating a new file.")
+        existing_df = pd.DataFrame()
+
+    # To DataFrame
+    new_df = pd.DataFrame(data)
+
+    # Append new data
+    combined_df = pd.concat([existing_df, new_df], ignore_index=True)
+
+    # Save the updated data
+    p.save_as(records=combined_df.to_dict(orient='records'), dest_file_name=ods_file)
+    print(f"Data successfully appended and saved to {ods_file}")
 
 except requests.exceptions.JSONDecodeError:
     print("Failed to decode JSON response.")

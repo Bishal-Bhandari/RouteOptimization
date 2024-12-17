@@ -1,5 +1,4 @@
 import json
-
 import pandas as pd
 import requests
 
@@ -13,19 +12,19 @@ api_key = api_keys['Brussels']['API_key']
 # Define the API endpoint and your API key
 url = "https://api.mobilitytwin.brussels/stib/speed"
 
-# Fetch data from the API
+# Fetch data from API
 response = requests.get(url, headers={'Authorization': f'Bearer {api_key}'})
 
 if response.status_code == 200:
     try:
-        # Parse the JSON response
+        # Parse the JSON
         data = response.json()
 
-        # Check if data is in a suitable format (list of dictionaries)
+        # List of dictionaries
         if isinstance(data, list):
-            # Convert directly to a pandas DataFrame
+            # Pandas DataFrame
             df = pd.DataFrame(data)
-        elif "features" in data:  # Handle GeoJSON-like structures
+        elif "features" in data:
             df = pd.json_normalize(data["features"])
         else:
             raise ValueError("Unexpected data format. Adjust the code as needed.")
@@ -33,10 +32,20 @@ if response.status_code == 200:
         # Define the output ODS file
         output_file = "../refineData/Brussel MT/speed_data.ods"
 
-        # Save to an ODS file
-        df.to_excel(output_file, engine="odf", index=False)
+        # Load existing ODS file
+        try:
+            existing_data = pd.read_excel(output_file, engine='odf')
+            print("Existing data loaded successfully.")
+        except FileNotFoundError:
+            print("Existing file not found. Creating a new file.")
+            existing_data = pd.DataFrame()
 
-        print(f"Data successfully saved to {output_file}")
+        # Append new data
+        combined_data = pd.concat([existing_data, df], ignore_index=True)
+
+        # Save the updated data
+        combined_data.to_excel(output_file, engine='odf', index=False)
+        print(f"Data successfully appended and saved to {output_file}")
 
     except ValueError as e:
         print(f"Error processing the JSON data: {e}")

@@ -15,54 +15,63 @@ with open('../api_keys.json') as json_file:
 # Brussel MT API key
 api_key = api_keys['Brussels']['API_key']
 
-# API endpoint and authorization
+# API endpoint
 url = "https://api.mobilitytwin.brussels/stib/shapefile"
 
-# Fetch data from the API
+# File paths
+output_file = "../refineData/Brussel MT/mobility_data_shape_file.ods"
+map_file = "../templates/brussels_mobility_map.html"
+
+# Data from the API
 response = requests.get(url, headers={'Authorization': f'Bearer {api_key}'})
 
-# Check if the request was successful
 if response.status_code == 200:
-    # Convert JSON data to a GeoDataFrame
+    # JSON data to GeoDataFrame
     data = response.json()
     gdf = gpd.GeoDataFrame.from_features(data["features"])
 
-    # Assign a CRS if missing (default to WGS84)
+    # CRS if missing
     if gdf.crs is None:
         gdf.set_crs(epsg=4326, inplace=True)  # WGS84 Lat/Lon CRS
 
-    # Reproject to a projected CRS (Web Mercator or Belgium Lambert 72)
-    gdf_projected = gdf.to_crs(epsg=3857)  # Web Mercator projection
+    # Projected CRS
+    gdf_projected = gdf.to_crs(epsg=3857)
 
-    # Calculate centroids in the projected CRS
     centroids = gdf_projected.centroid
 
-    # Reproject centroids back to geographic CRS for plotting
     centroids_geo = centroids.to_crs(epsg=4326)
 
-    # Calculate map center
+    # Map center
     center_lat = centroids_geo.y.mean()
     center_lon = centroids_geo.x.mean()
 
-    # Save to ODS file
-    output_file = "../refineData/Brussel MT/mobility_data.ods"
-    df = pd.DataFrame(gdf.drop(columns='geometry'))  # Drop geometry column for tabular data
-    df.to_excel(output_file, engine='odf', index=False)
-    print(f"Data saved to {output_file}")
+    # GeoDataFrame to DataFrame
+    new_data = pd.DataFrame(gdf.drop(columns='geometry'))
 
-    # Initialize the Folium map
+    # ODS file
+    try:
+        existing_data = pd.read_excel(output_file, engine='odf')
+        print("Existing data loaded successfully.")
+    except FileNotFoundError:
+        print("Existing file not found. Creating a new file.")
+        existing_data = pd.DataFrame()
+
+    # Append new data
+    combined_data = pd.concat([existing_data, new_data], ignore_index=True)
+
+    # Updated data to ODS file
+    combined_data.to_excel(output_file, engine='odf', index=False)
+    print(f"Data successfully appended and saved to {output_file}")
+
+    # Create and save map
     m = folium.Map(location=[center_lat, center_lon], zoom_start=12)
-
-    # Add GeoJSON data to the Folium map
     GeoJson(gdf, name="Brussels Mobility Data").add_to(m)
-
-    # Add layer control
     folium.LayerControl().add_to(m)
 
-    # Save the map to an HTML file
-    map_file = "../templates/brussels_mobility_map.html"
+    # Save the map
     m.save(map_file)
-    # Open the map
+
+    # Open the map in the browser
     file_path = os.path.abspath(map_file)
     webbrowser.open(f"file://{file_path}")
 

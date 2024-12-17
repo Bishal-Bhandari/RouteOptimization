@@ -29,14 +29,30 @@ try:
     if "features" in data:
         gdf = gpd.GeoDataFrame.from_features(data["features"])
 
-        # Save GeoDataFrame to ODS format
+        # Define ODS file path
         ods_file = "../refineData/Brussel MT/stib_stops.ods"
+
+        # GeoDataFrame to DataFrame
         df = pd.DataFrame(gdf.drop(columns="geometry"))  # Drop geometry for ODS compatibility
         records = df.to_dict(orient='records')
-        p.save_as(records=records, dest_file_name=ods_file)
+
+        # Load existing ODS file
+        try:
+            existing_data = p.get_records(file_name=ods_file)
+            existing_df = pd.DataFrame(existing_data)
+            print("Existing data loaded successfully.")
+        except FileNotFoundError:
+            print("Existing file not found. Creating a new file.")
+            existing_df = pd.DataFrame()
+
+        # Append new data
+        combined_df = pd.concat([existing_df, df], ignore_index=True)
+
+        # Save the updated data
+        p.save_as(records=combined_df.to_dict(orient='records'), dest_file_name=ods_file)
+        print(f"Data successfully appended and saved to {ods_file}")
 
         # Plot data on a Folium map
-        # Set the initial map to the centroid of the data
         m = folium.Map(location=[gdf.geometry.centroid.y.mean(), gdf.geometry.centroid.x.mean()], zoom_start=12)
 
         # Add each point to the map
@@ -46,7 +62,7 @@ try:
             coords = row.geometry.centroid
             folium.Marker(
                 location=[coords.y, coords.x],
-                popup=row.get("name", "Unknown Stop")  # Replace 'name' with the actual stop name field
+                popup=row.get("stop_name", "Unknown Stop")  # Replace 'name' with the actual stop name field
             ).add_to(m)
 
         # Save the map to an HTML file

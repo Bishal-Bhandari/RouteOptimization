@@ -1,11 +1,22 @@
+import json
+import os
+import webbrowser
+
 import requests
 import geopandas as gpd
-import matplotlib.pyplot as plt
 import pandas as pd
+import folium
+from folium import GeoJson
+
+# Load the API keys from the JSON file
+with open('../api_keys.json') as json_file:
+    api_keys = json.load(json_file)
+
+# Brussel MT API key
+api_key = api_keys['Brussels']['API_key']
 
 # API endpoint and authorization
 url = "https://api.mobilitytwin.brussels/stib/shapefile"
-api_key = "YOUR_API_KEY"  # Replace this with your actual API key
 
 # Fetch data from the API
 response = requests.get(url, headers={'Authorization': f'Bearer {api_key}'})
@@ -16,19 +27,36 @@ if response.status_code == 200:
     data = response.json()
     gdf = gpd.GeoDataFrame.from_features(data["features"])
 
-    # Save to ODS file
-    output_file = "/mnt/data/mobility_data.ods"
-    df = pd.DataFrame(gdf.drop(columns='geometry'))  # Drop geometry column to save as a table
+    # Assign a CRS if it is missing (default to WGS84)
+    if gdf.crs is None:
+        gdf.set_crs(epsg=4326, inplace=True)
+
+        # Save to ODS file
+    output_file = "../refineData/Brussel MT/mobility_data.ods"
+    df = pd.DataFrame(gdf.drop(columns='geometry'))  # Drop geometry column for tabular data
     df.to_excel(output_file, engine='odf', index=False)
     print(f"Data saved to {output_file}")
 
-    # Plot the data using GeoPandas
-    plt.figure(figsize=(10, 10))
-    gdf.plot(edgecolor='k', color='cyan', alpha=0.7)
-    plt.title("Brussels Mobility Twin - STIB Data Visualization")
-    plt.xlabel("Longitude")
-    plt.ylabel("Latitude")
-    plt.show()
+    # Calculate map center
+    center_lat = gdf.geometry.centroid.y.mean()
+    center_lon = gdf.geometry.centroid.x.mean()
+
+    # Initialize the Folium map
+    m = folium.Map(location=[center_lat, center_lon], zoom_start=12)
+
+    # Add GeoJSON data to the Folium map
+    GeoJson(gdf, name="Brussels Mobility Data").add_to(m)
+
+    # Add layer control
+    folium.LayerControl().add_to(m)
+
+    # Save the map to an HTML file
+    map_file = "../templates/brussels_mobility_map.html"
+    m.save(map_file)
+    # Open the map
+    file_path = os.path.abspath(map_file)
+    webbrowser.open(f"file://{file_path}")
+
 else:
     print(f"Failed to fetch data. HTTP Status Code: {response.status_code}")
     print(response.text)

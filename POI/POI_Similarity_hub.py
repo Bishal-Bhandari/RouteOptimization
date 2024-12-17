@@ -16,26 +16,27 @@ bus_stop_data = bus_stop_data.dropna(subset=['Latitude', 'Longitude'])
 
 # Define color categories based on popularity rank
 def rank_to_color(rank):
-    if rank <= 1:
-        return 'red'
-    elif rank <= 2:
-        return 'orange'
-    elif rank <= 3:
-        return 'yellow'
+    colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'brown', 'cyan', 'magenta']
+    if rank <= 2:
+        return colors[0]  # red
     elif rank <= 4:
-        return 'green'
-    elif rank <= 5:
-        return 'orange'
+        return colors[1]  # orange
     elif rank <= 6:
-        return 'yellow'
-    elif rank <= 7:
-        return 'green'
+        return colors[2]  # yellow
     elif rank <= 8:
-        return 'orange'
-    elif rank <= 9:
-        return 'yellow'
+        return colors[3]  # green
+    elif rank <= 10:
+        return colors[4]  # blue
+    elif rank <= 12:
+        return colors[5]  # purple
+    elif rank <= 14:
+        return colors[6]  # pink
+    elif rank <= 16:
+        return colors[7]  # brown
+    elif rank <= 18:
+        return colors[8]  # cyan
     else:
-        return 'blue'
+        return colors[9]
 
 
 # Create a Folium map centered on the average coordinates of the POI data

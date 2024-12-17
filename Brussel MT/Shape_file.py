@@ -62,7 +62,7 @@ if response.status_code == 200:
     # Updated data to ODS file
     combined_data.to_excel(output_file, engine='odf', index=False)
     print(f"Data successfully appended and saved to {output_file}")
-
+    '''
     # Create and save map
     m = folium.Map(location=[center_lat, center_lon], zoom_start=12)
     GeoJson(gdf, name="Brussels Mobility Data").add_to(m)
@@ -74,7 +74,7 @@ if response.status_code == 200:
     # Open the map in the browser
     file_path = os.path.abspath(map_file)
     webbrowser.open(f"file://{file_path}")
-
+    '''
 else:
     print(f"Failed to fetch data. HTTP Status Code: {response.status_code}")
     print(response.text)

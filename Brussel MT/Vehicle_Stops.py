@@ -51,7 +51,7 @@ try:
         # Save the updated data
         p.save_as(records=combined_df.to_dict(orient='records'), dest_file_name=ods_file)
         print(f"Data successfully appended and saved to {ods_file}")
-
+        '''
         # Plot data on a Folium map
         m = folium.Map(location=[gdf.geometry.centroid.y.mean(), gdf.geometry.centroid.x.mean()], zoom_start=12)
 
@@ -71,6 +71,7 @@ try:
         # Open the saved map
         file_path = os.path.abspath(map_file)
         webbrowser.open(f"file://{file_path}")
+        '''
 
     else:
         print("The 'features' key is missing in the response.")

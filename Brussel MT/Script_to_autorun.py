@@ -6,8 +6,7 @@ python_files = [
     'Shape_file.py',
     'Vehicle_distance.py',
     'Vehicle_position.py',
-    'Vehicle_speed.py',
-    'Vehicle_Stops.py'
+    'Vehicle_speed.py'
 ]
 
 # Interval

@@ -1,4 +1,5 @@
-def time_peak():# Morning Peak (6 AM - 10 AM)
+def time_peak():
+    # Morning Peak (6 AM - 10 AM)
     morning_peak = [
         "bus_station", "train_station", "bicycle_rental", "taxi", "car_rental", "motorcycle_rental",
         "school", "university", "kindergarten", "college", "prep_school", "music_school",
@@ -31,7 +32,7 @@ def time_peak():# Morning Peak (6 AM - 10 AM)
 
     # Night Hours (9 PM - 12 AM)
     night_hours = [
-        "bar", "nightclub", "stripclub", "swingerclub", "brothel",
+        "bar", "nightclub", "stripclub", "swingerclub",
         "bus_station", "taxi", "car_rental", "hospital", "police",
         "fire_station", "vending_machine", "fuel"
     ]

@@ -25,7 +25,8 @@ def time_peak():
     # Evening Peak (6 PM - 9 PM)
     evening_peak = [
         "restaurant", "fast_food", "bbq", "biergarten", "cafe",
-        "bar", "pub", "nightclub", "stripclub", "hookah_lounge", "swingerclub",
+        "bar", "pub", "nightclub", "stripclub", "hookah_lounge",
+        "swingerclub",
         "cinema", "theatre", "arts_centre", "casino", "auditorium",
         "community_centre", "social_centre", "taxi", "bus_station"
     ]

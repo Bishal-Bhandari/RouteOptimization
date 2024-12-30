@@ -49,7 +49,7 @@ def time_peak():
         "hospital", "clinic", "pharmacy", "parking", "bus_station",
         "train_station", "vending_machine", "fuel"
     ]
-    print("hello")
+
 
 
 time_peak()

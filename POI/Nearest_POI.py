@@ -16,7 +16,7 @@ with open('../api_keys.json') as json_file:
 api_key = api_keys['Google_API']['API_key']
 
 # Radius
-radius = 500
+radius = 300
 
 # Type of places
 place_type = ['tourist_attraction', 'museum', 'school', 'university', 'point_of_interest', 'atm', 'bank',
